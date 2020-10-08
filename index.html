@@ -8,36 +8,6 @@
   </head>
   <body>
     <section id="living-room"></section>
-    <script>
-      window.addEventListener("DOMContentLoaded", loadSVG);
-
-      function loadSVG() {
-        console.log("load the SVG");
-        fetch("livingroom.svg")
-          .then((response) => response.text())
-          .then((svgData) => {
-            console.log("SVG loaded");
-            document.querySelector("#living-room").innerHTML = svgData;
-
-            //addSnif();
-            addAnimationClasses();
-          });
-      }
-
-      // function addSnif() {
-      //   fetch("snif.svg")
-      //     .then((response) => response.text())
-      //     .then((svgData) => {
-      //       console.log("SVG loaded");
-      //       document.querySelector("#living-room svg").innerHTML += svgData;
-
-      //       addAnimationClasses();
-      //     });
-      // }
-
-      function addAnimationClasses() {
-        document.querySelector("svg #snif").classList.add("walk");
-      }
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>

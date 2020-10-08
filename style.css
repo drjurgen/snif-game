@@ -6,7 +6,7 @@ body {
 }
 
 #living-room {
-  width: 50vw;
+  min-width: 100vw;
 }
 
 .walk {
