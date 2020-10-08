@@ -1,0 +1,26 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fafafa;
+}
+
+#living-room {
+  width: 50vw;
+}
+
+.walk {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: walk 4s linear infinite reverse both;
+  /* animation-play-state: paused; */
+  offset-rotate: 0deg;
+  offset-path: path("M140.9,249.6c30.8,1.4,64.9-13.7,65.5-29.6c0.7-17.7-40.3-33.4-74.6-32.2 c-18.7,0.7-47.3,6.9-52.4,20.2C73,224.7,105.7,248,140.9,249.6z");
+  /*  */
+}
+
+@keyframes walk {
+  100% {
+    offset-distance: 100%;
+  }
+}
