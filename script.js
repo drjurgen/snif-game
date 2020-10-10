@@ -34,9 +34,10 @@ function loadSnif() {
       console.log("Snif loaded");
       document.querySelector("#hidden_snif").innerHTML = svgData;
 
-      document.querySelector("#snif_back_right").style.display = "none";
-      document.querySelector("#snif_back_left").style.display = "none";
       document.querySelector("#snif_front_right").style.display = "none";
+      //document.querySelector("#snif_back_right").style.display = "none";
+      document.querySelector("#snif_front_left").style.display = "none";
+      document.querySelector("#snif_back_left").style.display = "none";
       addAnimationClasses();
     });
 }
@@ -136,10 +137,61 @@ function playLivingRoom() {
 
   function chooseSnifDirection(positionOnPath) {
     console.log(positionOnPath);
+    let snifDirection;
+
+    if(positionOnPath < 310 && positionOnPath > 200) {
+      snifDirection = "back right";
+      showSnifDirection(snifDirection)
+
+    } else if(positionOnPath < 210 && positionOnPath > 110) {
+      snifDirection = "front right";
+      showSnifDirection(snifDirection)
+      
+    } else if(positionOnPath < 100) {
+      snifDirection = "front left";
+      showSnifDirection(snifDirection)
+    } else if(positionOnPath < 50) {
+      snifDirection = "back left";
+      showSnifDirection(snifDirection)
+    }
+
   }
 
-  function showSnifDirection(positionOnPath) {
-    console.log(positionOnPath);
+  function showSnifDirection(snifDirection) {
+    if(snifDirection === "back right") {
+      console.log(snifDirection)
+      document.querySelector("#snif_back_left").style.display = "none";
+      document.querySelector("#snif_front_left").style.display = "none";
+      document.querySelector("#snif_front_right").style.display = "none";
+
+      // show correct direction
+      document.querySelector("#snif_back_right").style.display = "inline";
+    } else if(snifDirection === "front right") {
+      console.log(snifDirection)
+      document.querySelector("#snif_back_right").style.display = "none";
+      document.querySelector("#snif_back_left").style.display = "none";
+      document.querySelector("#snif_front_left").style.display = "none";
+
+      // show correct direction
+      document.querySelector("#snif_front_right").style.display = "inline";
+    } else if(snifDirection === "back left") {
+      console.log(snifDirection)
+      document.querySelector("#snif_back_right").style.display = "none";
+      document.querySelector("#snif_front_left").style.display = "none";
+      document.querySelector("#snif_front_right").style.display = "none";
+
+      // show correct direction
+      document.querySelector("#snif_back_left").style.display = "inline";
+    } else if(snifDirection === "front left") {
+      console.log(snifDirection)
+      document.querySelector("#snif_back_right").style.display = "none";
+      document.querySelector("#snif_back_left").style.display = "none";
+      document.querySelector("#snif_front_right").style.display = "none";
+
+      // show correct direction
+      document.querySelector("#snif_front_left").style.display = "inline";
+    }
+
   }
 }
 

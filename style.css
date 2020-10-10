@@ -7,6 +7,7 @@ body {
 
 #living-room {
   width: 50vw;
+  position: relative;
 }
 
 .walk {
@@ -28,10 +29,24 @@ body {
 #tv,
 #window {
   cursor: pointer;
+  transition: all 0.2s ease-out;
+  transform-box: fill-box;
+  transform-origin: center;
+  stroke-opacity: 0;
+  stroke: rgba(252, 252, 117, 0.25);
+  stroke-width: 1;
+}
+
+#tv:hover,
+#window:hover {
+  transform: scale(1.02);
+  stroke-opacity: 1;
 }
 
 #hidden_snif {
   width: 115px;
   margin-left: 100px;
-  display: none;
+  /* display: none; */
+  position: absolute;
+  z-index: -1;
 }
