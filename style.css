@@ -1,8 +1,9 @@
 body {
+  /* margin: 0; */
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fafafa;
+  background-color: #fffef7;
 }
 
 #living-room {
@@ -10,19 +11,60 @@ body {
   position: relative;
 }
 
-.walk {
+.follow-path {
   transform-box: fill-box;
   transform-origin: bottom;
-  animation: walk 4s linear infinite reverse both;
+  animation: follow-path 4s linear infinite reverse both;
   animation-play-state: paused;
   offset-rotate: 0deg;
   offset-path: path("M140.9,249.6c30.8,1.4,64.9-13.7,65.5-29.6c0.7-17.7-40.3-33.4-74.6-32.2 c-18.7,0.7-47.3,6.9-52.4,20.2C73,224.7,105.7,248,140.9,249.6z");
   /*  */
 }
 
-@keyframes walk {
+@keyframes follow-path {
   100% {
     offset-distance: 100%;
+  }
+}
+
+.walk {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: walk 0.4s ease-in-out infinite alternate both;
+  animation-play-state: paused;
+}
+
+@keyframes walk {
+  0% {
+    transform: scaleY(0.8) scaleX(0.8);
+  }
+
+  50% {
+    transform: scaleY(0.6) scaleX(1);
+  }
+
+  100% {
+    transform: scaleY(0.8) scaleX(0.8);
+  }
+}
+
+.idle {
+  animation: idle 1.25s ease-in-out infinite alternate both;
+  transform-box: fill-box;
+  transform-origin: bottom;
+}
+
+@keyframes idle {
+  0% {
+    transform: scaleY(1) scaleX(1);
+  }
+
+  50% {
+    transform: scaleY(0.99) scaleX(1.02);
+  }
+
+  100% {
+    transform: scaleY(1) scaleX(1);
   }
 }
 
@@ -43,10 +85,35 @@ body {
   stroke-opacity: 1;
 }
 
-#hidden_snif {
+#hidden-snif {
   width: 115px;
   margin-left: 100px;
   /* display: none; */
   position: absolute;
+  opacity: 0;
   z-index: -1;
+}
+
+.fade-in {
+  animation: fade_in 0.8s ease-in-out 1 both;
+}
+
+@keyframes fade_in {
+  0% {
+    transform: translateY(-800px) scaleX(0) scaleY(1.8);
+    opacity: 0;
+  }
+
+  50% {
+    transform: translateY(0) scaleX(0.15);
+  }
+
+  80% {
+    transform: translateY(100px) scaleX(1.2) scaleY(0.8);
+  }
+
+  100% {
+    transform: translateY(0) scaleX(1) scaleY(1);
+    opacity: 1;
+  }
 }

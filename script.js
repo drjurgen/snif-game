@@ -32,7 +32,8 @@ function loadSnif() {
     .then((response) => response.text())
     .then((svgData) => {
       console.log("Snif loaded");
-      document.querySelector("#hidden_snif").innerHTML = svgData;
+      console.log("\n");
+      document.querySelector("#hidden-snif").innerHTML = svgData;
 
       document.querySelector("#snif_front_right").style.display = "none";
       //document.querySelector("#snif_back_right").style.display = "none";
@@ -43,7 +44,13 @@ function loadSnif() {
 }
 
 function addAnimationClasses() {
-  document.querySelector("#living-room svg #snif").classList.add("walk");
+  document.querySelector("#living-room #snif").classList.add("follow-path");
+
+
+  document.querySelector("#hidden-snif #snif_front_right").classList.add("walk");
+  document.querySelector("#hidden-snif #snif_back_right").classList.add("walk");
+  document.querySelector("#hidden-snif #snif_front_left").classList.add("walk");
+  document.querySelector("#hidden-snif #snif_back_left").classList.add("walk");
 
   runLoop();
 }
@@ -100,13 +107,17 @@ function playLivingRoom() {
     windowX = document.querySelector("#window").getBBox().x;
     windowY = document.querySelector("#window").getBBox().y;
 
-    console.log({ snifX, snifY });
+    //console.log({ snifX, snifY });
   }
 
   function goToTv() {
     walkingToTv = true;
     walkingToWindow = false;
-    document.querySelector("#snif").style.animationPlayState = "running";
+    document.querySelector("#snif").style.animationPlayState = "running"; //run path animation
+
+    //start all walk animations on all snif-sprites
+    document.querySelectorAll(".walk").forEach(sprite => sprite.style.animationPlayState = "running");
+    
   }
 
   function inFrontTv() {
@@ -114,15 +125,34 @@ function playLivingRoom() {
       console.log("snif x and y:", { snifX, snifY });
       console.log("tv x and y:", { tvX, tvY });
       console.log("snif kan nu slukke tv");
-      document.querySelector("#snif").style.animationPlayState = "paused";
+      document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
+
+      //pause all walk animations on all snif-sprites
+      document.querySelectorAll("#hidden-snif .walk").forEach(sprite => {
+        sprite.addEventListener("animationiteration", toggleWalk);
+        function toggleWalk() {
+          sprite.classList.remove("walk");
+          sprite.classList.add("walk");
+          sprite.style.animationPlayState = "paused";
+          console.log("pause walk animation")
+        }
+        setTimeout(function () {
+          sprite.removeEventListener("animationiteration", toggleWalk);
+        }, 1000);
+      });
+      
       walkingToTv = false;
+      return true;
     }
   }
 
   function goToWindow() {
     walkingToWindow = true;
     walkingToTv = false;
-    document.querySelector("#snif").style.animationPlayState = "running";
+    document.querySelector("#snif").style.animationPlayState = "running"; //run path animation
+
+    //start all walk animations on all snif-sprites
+    document.querySelectorAll(".walk").forEach(sprite => sprite.style.animationPlayState = "running");
   }
 
   function inFrontWindow() {
@@ -130,13 +160,28 @@ function playLivingRoom() {
       console.log("snif x and y:", { snifX, snifY });
       console.log("window x and y:", { tvX, tvY });
       console.log("snif kan nu lukke vinduet");
-      document.querySelector("#snif").style.animationPlayState = "paused";
+      document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
+
+      //pause all walk animations on all snif-sprites
+      document.querySelectorAll("#hidden-snif .walk").forEach(sprite => {
+        sprite.addEventListener("animationiteration", toggleWalk);
+        function toggleWalk() {
+          sprite.classList.remove("walk");
+          sprite.classList.add("walk");
+          sprite.style.animationPlayState = "paused";
+          console.log("pause walk animation")
+        }
+        setTimeout(function () {
+          sprite.removeEventListener("animationiteration", toggleWalk);
+        }, 1000);
+      });
+      
       walkingToWindow = false;
     }
   }
 
   function chooseSnifDirection(positionOnPath) {
-    console.log(positionOnPath);
+    //console.log(positionOnPath);
     let snifDirection;
 
     if(positionOnPath < 310 && positionOnPath > 200) {
@@ -159,7 +204,7 @@ function playLivingRoom() {
 
   function showSnifDirection(snifDirection) {
     if(snifDirection === "back right") {
-      console.log(snifDirection)
+      //console.log(snifDirection)
       document.querySelector("#snif_back_left").style.display = "none";
       document.querySelector("#snif_front_left").style.display = "none";
       document.querySelector("#snif_front_right").style.display = "none";
@@ -167,7 +212,7 @@ function playLivingRoom() {
       // show correct direction
       document.querySelector("#snif_back_right").style.display = "inline";
     } else if(snifDirection === "front right") {
-      console.log(snifDirection)
+      //console.log(snifDirection)
       document.querySelector("#snif_back_right").style.display = "none";
       document.querySelector("#snif_back_left").style.display = "none";
       document.querySelector("#snif_front_left").style.display = "none";
@@ -175,7 +220,7 @@ function playLivingRoom() {
       // show correct direction
       document.querySelector("#snif_front_right").style.display = "inline";
     } else if(snifDirection === "back left") {
-      console.log(snifDirection)
+      //console.log(snifDirection)
       document.querySelector("#snif_back_right").style.display = "none";
       document.querySelector("#snif_front_left").style.display = "none";
       document.querySelector("#snif_front_right").style.display = "none";
@@ -183,7 +228,7 @@ function playLivingRoom() {
       // show correct direction
       document.querySelector("#snif_back_left").style.display = "inline";
     } else if(snifDirection === "front left") {
-      console.log(snifDirection)
+      //console.log(snifDirection)
       document.querySelector("#snif_back_right").style.display = "none";
       document.querySelector("#snif_back_left").style.display = "none";
       document.querySelector("#snif_front_right").style.display = "none";
