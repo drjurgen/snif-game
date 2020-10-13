@@ -1,9 +1,22 @@
 body {
-  /* margin: 0; */
+  margin: 0;
+  background-color: #fffef7;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#game {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #fffef7;
+}
+
+#ui-elements {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
 }
 
 #living-room {
@@ -11,17 +24,85 @@ body {
   position: relative;
 }
 
+#tv,
+#radiator_x5F_hot,
+#lightswitch_left_1_,
+#lightswitch_left_2_,
+#lightswitch_right_1_,
+#lightswitch_left_3_,
+#left_speaker,
+#right_speaker,
+#ipad,
+#fan,
+#floor_lamp {
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  transform-box: fill-box;
+  transform-origin: center;
+  stroke-opacity: 0;
+  stroke: rgba(252, 252, 117, 0.25);
+  stroke-width: 1;
+}
+
+/* #left_speaker,
+#right_speaker {
+  display: none;
+} */
+
+#tv:hover,
+#radiator_x5F_hot:hover,
+#lightswitch_left_1_:hover,
+#lightswitch_left_2_:hover,
+#lightswitch_right_1_:hover,
+#lightswitch_left_3_:hover,
+#left_speaker:hover,
+#right_speaker:hover,
+#ipad:hover,
+#fan:hover,
+#floor_lamp:hover {
+  transform: scale(1.02);
+  stroke-opacity: 1;
+}
+
+#hidden-snif {
+  width: 115px;
+  margin-left: 100px;
+  /* display: none; */
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+
+.hide {
+  opacity: 0;
+  display: none;
+}
+
+/*  */
+/*  */
+/* livingroom animations */
 .follow-path {
   transform-box: fill-box;
   transform-origin: bottom;
-  animation: follow-path 4s linear infinite reverse both;
+  animation: follow-path 6s linear infinite backwards;
   animation-play-state: paused;
   offset-rotate: 0deg;
-  offset-path: path("M140.9,249.6c30.8,1.4,64.9-13.7,65.5-29.6c0.7-17.7-40.3-33.4-74.6-32.2 c-18.7,0.7-47.3,6.9-52.4,20.2C73,224.7,105.7,248,140.9,249.6z");
+  offset-path: path(
+    "M231.1,355.6c32.5,16,6,87.1,45.7,80.5s163.3-58.8,136.5-83.7c-28.6-26.6-34.1-13.4-86.3-44.7c-50.6-30.4-76.5-54.6-102.6-55.6c-21.6-0.9-32.6,13.4-59.6,26.8c-25.8,12.8-70.5,35.2-66.4,59.8C102.1,359.7,178.1,329.5,231.1,355.6z"
+  );
   /*  */
 }
 
+#path {
+  fill: none;
+  stroke: black;
+}
+
 @keyframes follow-path {
+  0% {
+    offset-distance: 0%;
+  }
+
   100% {
     offset-distance: 100%;
   }
@@ -68,40 +149,14 @@ body {
   }
 }
 
-#tv,
-#window {
-  cursor: pointer;
-  transition: all 0.2s ease-out;
-  transform-box: fill-box;
-  transform-origin: center;
-  stroke-opacity: 0;
-  stroke: rgba(252, 252, 117, 0.25);
-  stroke-width: 1;
-}
-
-#tv:hover,
-#window:hover {
-  transform: scale(1.02);
-  stroke-opacity: 1;
-}
-
-#hidden-snif {
-  width: 115px;
-  margin-left: 100px;
-  /* display: none; */
-  position: absolute;
-  opacity: 0;
-  z-index: -1;
-}
-
 .fade-in {
   animation: fade_in 0.8s ease-in-out 1 both;
+  opacity: 0;
 }
 
 @keyframes fade_in {
   0% {
     transform: translateY(-800px) scaleX(0) scaleY(1.8);
-    opacity: 0;
   }
 
   50% {
@@ -115,5 +170,70 @@ body {
   100% {
     transform: translateY(0) scaleX(1) scaleY(1);
     opacity: 1;
+  }
+}
+
+.note {
+  animation: note_kf 4s linear infinite;
+}
+
+@keyframes note_kf {
+  0% {
+    transform: translateY(0vw);
+  }
+
+  10% {
+    transform: translateX(-0.5vw) translateY(0.1vw);
+  }
+  100% {
+    transform: translateX(0) translateY(-6vw);
+  }
+}
+
+.speaker {
+  animation: speaker_kf 1s linear infinite alternate;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes speaker_kf {
+  100% {
+    transform: scale(1.2);
+  }
+}
+
+.spin {
+  position: relative;
+  animation: spin_kf 2s linear infinite;
+  transform-origin: center center;
+  transform-box: fill-box;
+}
+
+@keyframes spin_kf {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.glow {
+  animation-name: glow_kf;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+@keyframes glow_kf {
+  to {
+    filter: none;
+  }
+}
+
+.scale2 {
+  animation: scale2_kf 1s linear infinite alternate;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes scale2_kf {
+  100% {
+    transform: scale(1.1);
   }
 }
