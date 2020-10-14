@@ -3,26 +3,51 @@
 window.addEventListener("DOMContentLoaded", loadSVG);
 
 let svg;
+
+// SNIF
 let snif;
 let snifX;
 let snifY;
 
+// TV
 let tvX;
 let tvY;
 let walkingToTv = false;
 
+// RADIATOR
 let RadiatorX;
 let RadiatorY;
-let walkingToWindow = false;
+let walkingToRadiator = false;
 
-let objectClicked = 0;
+// SPEAKERS
+let speakerX;
+let speakerY;
+let clickedSpeaker;
+let walkingToSpeaker = false;
+
+// FLOOR LAMP
+let walkingToFloorLamp = false;
+
+// IPAD
+let walkingToIpad = false;
+
+// FAN
+let walkingToFan = false;
+
 let livingroomListeners = false;
 
 let score = 0;
 const timer = {
   timeCounter: 60,
-  timeLeft: 60,
+  timeLeft: 600,
 };
+
+const LivingRoomEnergySource = {
+  id: "",
+  isTurnedOn: false,
+};
+
+const allLivingRoomSources = [];
 
 function loadSVG() {
   console.log("load the SVG");
@@ -62,42 +87,117 @@ function prepareLivingroom() {
   document.querySelector("#hidden-snif #snif_back_left").classList.add("walk");
 
   addGuiEvents(); // add eventlisteners to liviingroom objects
-  animateSpeaker(); // start livingroom speaker animation
+  randomizeLivingroom(); // randomize states of energy sources
 
   runLoop(); // run the game loop
 }
 
-function animateSpeaker() {
-  //animate notes
-  document.querySelector("#left_speaker #note1_1_").classList.add("note");
-  setTimeout(function () {
-    document.querySelector("#left_speaker #note2_1_").classList.add("note");
-  }, 1000);
-  setTimeout(function () {
-    document.querySelector("#left_speaker #note3_1_").classList.add("note");
-  }, 2000);
+function randomizeLivingroom() {
+  // give every object an energy-source class
+  document.querySelector("#floor_lamp").classList.add("energy-source");
+  document.querySelector("#fan").classList.add("energy-source");
+  document.querySelector("#ipad").classList.add("energy-source");
+  document.querySelector("#tv").classList.add("energy-source");
+  document.querySelector("#radiator_x5F_hot").classList.add("energy-source");
+  // document.querySelector("#radiator_2_").classList.add("energy-source");
+  document.querySelector("#left_speaker").classList.add("energy-source");
+  document.querySelector("#right_speaker").classList.add("energy-source");
+  document.querySelector("#lightswitch_left_2_").classList.add("energy-source");
+  document.querySelector("#lightswitch_left_1_").classList.add("energy-source");
+  document.querySelector("#lightswitch_right_1_").classList.add("energy-source");
+  document.querySelector("#lightswitch_left_3_").classList.add("energy-source");
 
-  document.querySelector("#right_speaker #note1_2_").classList.add("note");
-  setTimeout(function () {
-    document.querySelector("#right_speaker #note2_2_").classList.add("note");
-  }, 1000);
-  setTimeout(function () {
-    document.querySelector("#right_speaker #note3_2_").classList.add("note");
-  }, 2000);
+  const powerStates = [true, false];
+  document.querySelectorAll(".energy-source").forEach((svgObj) => {
+    const isTurnedOn = powerStates[Math.round(Math.random(powerStates.length))];
+    const energyObj = Object.create(LivingRoomEnergySource);
+    energyObj.id = svgObj.id;
+    energyObj.isTurnedOn = isTurnedOn;
+    allLivingRoomSources.push(energyObj);
 
-  //animate speaker - to do
-  document.querySelector("#left_speaker_upper").classList.toggle("scale2");
-  document.querySelector("#right_speaker_upper").classList.toggle("scale2");
+    // random tv
+    if (energyObj.id === "tv" && energyObj.isTurnedOn === true) {
+      document.querySelector("#tv_static").classList.remove("hide");
+    } else if (energyObj.id === "tv" && energyObj.isTurnedOn === false) {
+      document.querySelector("#tv_static").classList.add("hide");
+    }
 
-  document.querySelector("#left_speaker_inner1").classList.toggle("speaker");
-  document.querySelector("#left_speaker_inner2").classList.toggle("speaker");
-  document.querySelector("#left_speaker_inner3").classList.toggle("speaker");
-  document.querySelector("#right_speaker_inner1").classList.toggle("speaker");
-  document.querySelector("#right_speaker_inner2").classList.toggle("speaker");
-  document.querySelector("#right_speaker_inner3").classList.toggle("speaker");
+    // random speakers
+    if ((energyObj.id === "left_speaker" && energyObj.isTurnedOn === true) || (energyObj.id === "right_speaker" && energyObj.isTurnedOn === true)) {
+      animateSpeaker(energyObj);
+    } else if ((energyObj.id === "left_speaker" && energyObj.isTurnedOn === false) || (energyObj.id === "right_speaker" && energyObj.isTurnedOn === false)) {
+      let noteId;
+      if (energyObj.id === "left_speaker") {
+        noteId = "1";
+      } else {
+        noteId = "2";
+      }
+      document.querySelector(`#${energyObj.id} #note1_${noteId}_`).classList.add("hide");
+      document.querySelector(`#${energyObj.id} #note2_${noteId}_`).classList.add("hide");
+      document.querySelector(`#${energyObj.id} #note3_${noteId}_`).classList.add("hide");
+    }
 
-  //animate fan
-  document.querySelector("#fan_blades").classList.add("spin");
+    // random radiator
+    if (energyObj.id === "radiator_x5F_hot" && energyObj.isTurnedOn === true) {
+      document.querySelector(`#${energyObj.id}`).classList.remove("hide");
+      document.querySelector(`#radiator_2_`).classList.add("hide");
+    } else if (energyObj.id === "radiator_x5F_hot" && energyObj.isTurnedOn === false) {
+      document.querySelector(`#${energyObj.id}`).classList.add("hide");
+      document.querySelector(`#radiator_2_`).classList.remove("hide");
+    }
+
+    // random floor lamp
+    if (energyObj.id === "floor_lamp" && energyObj.isTurnedOn === true) {
+      document.querySelector("#floor_lamp #light_1_").classList.remove("hide");
+    } else if (energyObj.id === "floor_lamp" && energyObj.isTurnedOn === false) {
+      document.querySelector("#floor_lamp #light_1_").classList.add("hide");
+    }
+
+    // random ipad
+    if (energyObj.id === "ipad" && energyObj.isTurnedOn === true) {
+      document.querySelector("#ipad_screen").classList.remove("hide");
+    } else if (energyObj.id === "ipad" && energyObj.isTurnedOn === false) {
+      document.querySelector("#ipad_screen").classList.add("hide");
+    }
+
+    // random fan
+    if (energyObj.id === "fan" && energyObj.isTurnedOn === true) {
+      document.querySelector("#fan_blades").classList.add("spin");
+    }
+  });
+  console.log(allLivingRoomSources);
+}
+
+function animateSpeaker(energyObj) {
+  let noteId;
+  if (energyObj.id === "left_speaker") {
+    noteId = "1";
+  } else {
+    noteId = "2";
+  }
+
+  if (energyObj.isTurnedOn === true) {
+    // remove hide from notes
+
+    // animate notes
+    document.querySelectorAll(`#${energyObj.id} #music_x5F_note_x5F_r_${noteId}`).forEach((g) => g.classList.remove("hide"));
+    document.querySelector(`#${energyObj.id} #note1_${noteId}_`).classList.add("note");
+    document.querySelector(`#${energyObj.id} #note1_${noteId}_`).classList.remove("hide");
+
+    setTimeout(function () {
+      document.querySelector(`#${energyObj.id} #note2_${noteId}_`).classList.add("note");
+      document.querySelector(`#${energyObj.id} #note2_${noteId}_`).classList.remove("hide");
+    }, 1000);
+
+    setTimeout(function () {
+      document.querySelector(`#${energyObj.id} #note3_${noteId}_`).classList.add("note");
+      document.querySelector(`#${energyObj.id} #note3_${noteId}_`).classList.remove("hide");
+    }, 2000);
+    document.querySelector(`#${energyObj.id}_upper`).classList.add("scale2"); // add animation to speaker body
+  } else {
+    document.querySelectorAll(`#${energyObj.id} #music_x5F_note_x5F_r_${noteId}`).forEach((g) => g.classList.toggle("hide"));
+    document.querySelector(`#${energyObj.id}_upper`).classList.remove("scale2");
+  }
 }
 
 function addGuiEvents() {
@@ -118,63 +218,6 @@ function addGuiEvents() {
 
     document.querySelector("#right_ceiling_lamp_1_ #light_5_").classList.toggle("hide");
     document.querySelector("#lightswitch_right_1_").classList.toggle("hide");
-  }
-
-  //speaker listeners
-  document.querySelector("#left_speaker").addEventListener("click", stopLeftSpeaker);
-  document.querySelector("#right_speaker").addEventListener("click", stopRightSpeaker);
-
-  function stopLeftSpeaker() {
-    document.querySelectorAll("#left_speaker #music_x5F_note_x5F_r").forEach((g) => g.classList.toggle("hide"));
-    document.querySelector("#left_speaker_inner1").classList.toggle("speaker");
-    document.querySelector("#left_speaker_inner2").classList.toggle("speaker");
-    document.querySelector("#left_speaker_inner3").classList.toggle("speaker");
-    document.querySelector("#left_speaker_upper").classList.toggle("scale2");
-  }
-
-  function stopRightSpeaker() {
-    document.querySelectorAll("#right_speaker #music_x5F_note_x5F_r_1_").forEach((g) => g.classList.toggle("hide"));
-    document.querySelector("#right_speaker_inner1").classList.toggle("speaker");
-    document.querySelector("#right_speaker_inner2").classList.toggle("speaker");
-    document.querySelector("#right_speaker_inner3").classList.toggle("speaker");
-    document.querySelector("#right_speaker_upper").classList.toggle("scale2");
-  }
-
-  //radiator eventlistener
-  document.querySelector("#radiator_x5F_hot").addEventListener("click", offRadiator);
-
-  function offRadiator() {
-    console.log("yoyo");
-    document.querySelector("#radiator_x5F_hot").classList.toggle("hide");
-    document.querySelector("#radiator_2_").classList.toggle("hide");
-  }
-
-  //tv listener
-  document.querySelector("#tv").addEventListener("click", offTv);
-
-  function offTv() {
-    document.querySelector("#tv_static").classList.toggle("hide");
-  }
-
-  //off ipad
-  document.querySelector("#ipad").addEventListener("click", offIpad);
-
-  function offIpad() {
-    document.querySelector("#ipad_screen").classList.toggle("hide");
-  }
-
-  //off fan
-  document.querySelector("#fan").addEventListener("click", offFan);
-
-  function offFan() {
-    document.querySelector("#fan_blades").classList.toggle("spin");
-  }
-
-  //off floor lamp
-  document.querySelector("#floor_lamp").addEventListener("click", offFloorLamp);
-
-  function offFloorLamp() {
-    document.querySelector("#floor_lamp #light_1_").classList.toggle("hide");
   }
 }
 
@@ -208,51 +251,42 @@ function playLivingRoom() {
   if (livingroomListeners === false) {
     livingroomListeners = true;
 
-    // add eventlisteners to tv and radiator
-    document.querySelector("#tv").addEventListener("click", tvClick);
-    document.querySelector("#radiator_x5F_hot").addEventListener("click", radiatorClick);
-  }
+    // add eventlisteners
+    document.querySelector("#tv").addEventListener("click", goToTv); // add tv eventlistener
+    document.querySelector("#radiator_x5F_hot").addEventListener("click", goToRadiator); // add hot radiator eventlistener
+    document.querySelector("#radiator_2_").addEventListener("click", goToRadiator); // add normal radiator eventlistener
 
-  const checkpoints = [
-    { x: 231, y: 355 },
-    { x: 274, y: 438 },
-    { x: 416, y: 357 },
-    { x: 325, y: 306 },
-    { x: 224, y: 252 },
-    { x: 140, y: 292 },
-    { x: 101, y: 323 },
-  ];
+    document.querySelector("#left_speaker").addEventListener("click", goToSpeaker); // add left speaker eventlistener
+    document.querySelector("#right_speaker").addEventListener("click", goToSpeaker); // add right speaker eventlistener
+    document.querySelector("#floor_lamp").addEventListener("click", goToFloorLamp); // add floor lamp eventlistener
+    document.querySelector("#ipad").addEventListener("click", goToIpad); // add ipad eventlistener
+    document.querySelector("#fan").addEventListener("click", goToFan); // add fan eventlistener
+  }
 
   findSnifLocation();
-
-  function tvClick() {
-    objectClicked++;
-    if (objectClicked === 1) {
-      console.log({ objectClicked });
-      setTimeout(function () {
-        objectClicked = 0;
-        goToTv();
-      }, 100);
-    }
-  }
-
-  function radiatorClick() {
-    objectClicked++;
-    if (objectClicked === 1) {
-      console.log({ objectClicked });
-      setTimeout(function () {
-        objectClicked = 0;
-        goToRadiator();
-      }, 100);
-    }
-  }
 
   if (walkingToTv === true) {
     inFrontTv();
   }
 
-  if (walkingToWindow === true) {
+  if (walkingToRadiator === true) {
     inFrontRadiator();
+  }
+
+  if (walkingToSpeaker === true) {
+    inFrontSpeaker();
+  }
+
+  if (walkingToFloorLamp === true) {
+    inFrontFloorLamp();
+  }
+
+  if (walkingToIpad === true) {
+    inFrontIpad();
+  }
+
+  if (walkingToFan === true) {
+    inFrontFan();
   }
 
   function findSnifLocation() {
@@ -286,25 +320,9 @@ function playLivingRoom() {
     // console.log({ snifX, snifY });
   }
 
+  // TV BELOW
   function goToTv() {
     walkingToTv = true;
-    walkingToWindow = false;
-    const tvCheckpoint = { x: 325, y: 306 };
-
-    if (tvX - snifX > 100) {
-      console.log("direction should be clockwice");
-      // const path = getPath(tvCheckpoint, true);
-      // console.log(path);
-      // document.querySelector("#snif").style.offsetPath = `path("M${path}")`;
-      // document.querySelector("#path").setAttribute("d", `M${path}`);
-    } else if (tvX - snifX < 100) {
-      console.log("direction should be counter clockwice");
-      // const path = getPath(tvCheckpoint, false);
-      // console.log(path);
-      // document.querySelector("#snif").style.offsetPath = `path("M${path}")`;
-      // document.querySelector("#path").setAttribute("d", `M${path}`);
-    }
-
     document.querySelectorAll(".walk").forEach((sprite) => (sprite.style.animationPlayState = "running")); //start all walk animations on all snif-sprites
     document.querySelector("#snif").style.animationPlayState = "running"; //run path animation
   }
@@ -324,46 +342,28 @@ function playLivingRoom() {
           sprite.offsetHeight;
           sprite.classList.add("walk");
           sprite.style.animationPlayState = "paused";
-          console.log("pause walk animation");
         }
         setTimeout(function () {
           sprite.removeEventListener("animationiteration", toggleWalk);
         }, 500);
       });
 
+      document.querySelector("#tv_static").classList.toggle("hide");
       increaseScore();
       walkingToTv = false;
     }
   }
 
+  // RADIATOR BELOW
   function goToRadiator() {
-    walkingToWindow = true;
-    walkingToTv = false;
-    const radiatorCheckpoint = { x: 140, y: 292 };
-
-    if (RadiatorX - snifX > -300) {
-      console.log("direction should be clockwice");
-      // const path = getPath(radiatorCheckpoint, true);
-      // console.log(path);
-      // document.querySelector("#snif").style.offsetPath = `path("M${path}")`;
-      // document.querySelector("#path").setAttribute("d", `M${path}`);
-    } else if (RadiatorX - snifX < -300) {
-      console.log(RadiatorX - snifX);
-      // console.log("direction should be counter clockwice");
-      // const path = getPath(radiatorCheckpoint, false);
-      // console.log(path);
-      // document.querySelector("#snif").style.offsetPath = `path("M${path}")`;
-      // document.querySelector("#path").setAttribute("d", `M${path}`);
-    }
-
+    walkingToRadiator = true;
     document.querySelectorAll(".walk").forEach((sprite) => (sprite.style.animationPlayState = "running")); //start all walk animations on all snif-sprites
     document.querySelector("#snif").style.animationPlayState = "running"; //run path animation
   }
 
   function inFrontRadiator() {
-    if (snifX > 120 && snifX < 160 && snifY > 280 && snifY < 310) {
-      console.log("snif x and y:", { snifX, snifY }, "radiator x and y:", { RadiatorX, RadiatorY });
-      console.log("snif kan nu skrue ned for radiatoren");
+    if (snifX > 170 && snifX < 190 && snifY > 250 && snifY < 270) {
+      //console.log("snif x and y:", { snifX, snifY }, "radiator x and y:", { RadiatorX, RadiatorY });
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
 
       //pause all walk animations on all snif-sprites
@@ -373,18 +373,230 @@ function playLivingRoom() {
           sprite.classList.remove("walk");
           sprite.classList.add("walk");
           sprite.style.animationPlayState = "paused";
-          console.log("pause walk animation");
         }
         setTimeout(function () {
           sprite.removeEventListener("animationiteration", toggleWalk);
         }, 500);
       });
 
-      increaseScore();
-      walkingToWindow = false;
+      document.querySelector("#radiator_x5F_hot").classList.toggle("hide");
+      if (document.querySelector("#radiator_x5F_hot").classList.contains("hide")) {
+        document.querySelector(`#radiator_2_`).classList.toggle("hide");
+        console.log(`snif skruede ned for radiatoren`);
+        increaseScore();
+      } else {
+        document.querySelector(`#radiator_2_`).classList.toggle("hide");
+        console.log(`snif tændte for radiatoren`);
+        score = score - 2;
+        increaseScore();
+      }
+
+      walkingToRadiator = false;
     }
   }
 
+  // SPEAKERS BELOW
+  function goToSpeaker() {
+    if (this !== undefined) {
+      const speaker = allLivingRoomSources.find((element) => element.id === this.id);
+      // console.log(speaker);
+
+      walkingToSpeaker = true;
+      document.querySelectorAll(".walk").forEach((sprite) => (sprite.style.animationPlayState = "running")); //start all walk animations on all snif-sprites
+      document.querySelector("#snif").style.animationPlayState = "running"; //run path animation
+
+      if (speaker.id === "left_speaker") {
+        speakerX = 224;
+        speakerY = 252;
+        clickedSpeaker = speaker;
+      } else {
+        speakerX = 416;
+        speakerY = 357;
+        clickedSpeaker = speaker;
+      }
+    }
+  }
+
+  function inFrontSpeaker() {
+    if (speakerX === 224 && speakerY === 252) {
+      if (snifX > 210 && snifX < 235 && snifY > 240 && snifY < 260) {
+        document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
+
+        //pause all walk animations on all snif-sprites
+        document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
+          sprite.addEventListener("animationiteration", toggleWalk);
+          function toggleWalk() {
+            sprite.classList.remove("walk");
+            sprite.classList.add("walk");
+            sprite.style.animationPlayState = "paused";
+          }
+          setTimeout(function () {
+            sprite.removeEventListener("animationiteration", toggleWalk);
+          }, 500);
+        });
+        toggleSpeaker();
+        walkingToSpeaker = false;
+      }
+    } else if (speakerX === 416 && speakerY === 357) {
+      if (snifX > 405 && snifX < 425 && snifY > 350 && snifY < 365) {
+        document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
+
+        //pause all walk animations on all snif-sprites
+        document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
+          sprite.addEventListener("animationiteration", toggleWalk);
+          function toggleWalk() {
+            sprite.classList.remove("walk");
+            sprite.classList.add("walk");
+            sprite.style.animationPlayState = "paused";
+          }
+          setTimeout(function () {
+            sprite.removeEventListener("animationiteration", toggleWalk);
+          }, 500);
+        });
+        toggleSpeaker();
+        walkingToSpeaker = false;
+      }
+    }
+  }
+
+  function toggleSpeaker() {
+    if (clickedSpeaker.isTurnedOn === true) {
+      increaseScore();
+      console.log(`snif slukkede for ${clickedSpeaker.id}`);
+    } else {
+      score = score - 2;
+      increaseScore();
+      console.log(`snif tændte for ${clickedSpeaker.id}`);
+    }
+
+    clickedSpeaker.isTurnedOn = !clickedSpeaker.isTurnedOn;
+    animateSpeaker(clickedSpeaker);
+  }
+
+  // FLOOR LAMP BELOW
+  function goToFloorLamp() {
+    walkingToFloorLamp = true;
+    document.querySelectorAll(".walk").forEach((sprite) => (sprite.style.animationPlayState = "running")); //start all walk animations on all snif-sprites
+    document.querySelector("#snif").style.animationPlayState = "running"; //run path animation
+  }
+
+  function inFrontFloorLamp() {
+    if (snifX > 265 && snifX < 280 && snifY > 430 && snifY < 445) {
+      document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
+
+      //pause all walk animations on all snif-sprites
+      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
+        sprite.addEventListener("animationiteration", toggleWalk);
+        function toggleWalk() {
+          sprite.classList.remove("walk");
+          sprite.classList.add("walk");
+          sprite.style.animationPlayState = "paused";
+        }
+        setTimeout(function () {
+          sprite.removeEventListener("animationiteration", toggleWalk);
+        }, 500);
+      });
+
+      if (document.querySelector("#floor_lamp #light_1_").classList.contains("hide")) {
+        document.querySelector("#floor_lamp #light_1_").classList.toggle("hide");
+        score = score - 2;
+        increaseScore();
+        console.log(`snif tændte for gulvlampen`);
+      } else if (!document.querySelector("#floor_lamp #light_1_").classList.contains("hide")) {
+        document.querySelector("#floor_lamp #light_1_").classList.toggle("hide");
+        increaseScore();
+        console.log(`snif slukkede for gulvlampen`);
+      }
+
+      walkingToFloorLamp = false;
+    }
+  }
+
+  // IPAD BELOW
+  function goToIpad() {
+    walkingToIpad = true;
+    document.querySelectorAll(".walk").forEach((sprite) => (sprite.style.animationPlayState = "running")); //start all walk animations on all snif-sprites
+    document.querySelector("#snif").style.animationPlayState = "running"; //run path animation
+  }
+
+  function inFrontIpad() {
+    if (snifX > 215 && snifX < 235 && snifY > 330 && snifY < 360) {
+      document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
+
+      //pause all walk animations on all snif-sprites
+      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
+        sprite.addEventListener("animationiteration", toggleWalk);
+        function toggleWalk() {
+          sprite.classList.remove("walk");
+          sprite.classList.add("walk");
+          sprite.style.animationPlayState = "paused";
+        }
+        setTimeout(function () {
+          sprite.removeEventListener("animationiteration", toggleWalk);
+        }, 500);
+      });
+
+      if (document.querySelector("#ipad_screen").classList.contains("hide")) {
+        document.querySelector("#ipad_screen").classList.toggle("hide");
+        score = score - 2;
+        increaseScore();
+        console.log(`snif tændte for iPad'en`);
+      } else if (!document.querySelector("#ipad_screen").classList.contains("hide")) {
+        document.querySelector("#ipad_screen").classList.toggle("hide");
+        increaseScore();
+        console.log(`snif slukkede for iPad'en`);
+      }
+
+      walkingToIpad = false;
+    }
+  }
+
+  // FAN BELOW
+  function goToFan() {
+    walkingToFan = true;
+    document.querySelectorAll(".walk").forEach((sprite) => (sprite.style.animationPlayState = "running")); //start all walk animations on all snif-sprites
+    document.querySelector("#snif").style.animationPlayState = "running"; //run path animation
+  }
+
+  function inFrontFan() {
+    if (snifX > 240 && snifX < 255 && snifY > 375 && snifY < 385) {
+      document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
+
+      //pause all walk animations on all snif-sprites
+      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
+        sprite.addEventListener("animationiteration", toggleWalk);
+        function toggleWalk() {
+          sprite.classList.remove("walk");
+          sprite.classList.add("walk");
+          sprite.style.animationPlayState = "paused";
+        }
+        setTimeout(function () {
+          sprite.removeEventListener("animationiteration", toggleWalk);
+        }, 500);
+      });
+
+      if (document.querySelector("#fan_blades").classList.contains("spin")) {
+        document.querySelector("#fan_blades").classList.remove("spin");
+
+        increaseScore();
+        console.log(`snif slukkede for blæseren`);
+      } else if (!document.querySelector("#fan_blades").classList.contains("hide")) {
+        document.querySelector("#fan_blades").classList.add("spin");
+        score = score - 2;
+        increaseScore();
+        console.log(`snif tændte for blæseren`);
+      }
+
+      walkingToFan = false;
+    }
+  }
+
+  //
+  //
+  //
+  //
+  //
+  //
   function chooseSnifDirection(positionOnPath) {
     //console.log(positionOnPath);
     let snifDirection;
@@ -438,35 +650,6 @@ function playLivingRoom() {
       // show correct direction
       document.querySelector("#snif_front_left").style.display = "inline";
     }
-  }
-
-  function getPath(checkpointTo, isClockwice) {
-    let checkpointReached = false;
-    let i = checkpoints.findIndex((cp) => cp.x == snifX && cp.y == snifY);
-    let path = `${snifX},${snifY}`;
-
-    while (!checkpointReached) {
-      if (isClockwice) {
-        i--;
-        if (i < 0) {
-          i = checkpoints.length - 1;
-        }
-      } else {
-        i++;
-        if (i >= checkpoints.length) {
-          i = 0;
-        }
-      }
-
-      const cpX = checkpoints[i].x;
-      const cpY = checkpoints[i].y;
-      path += ` ${cpX},${cpY}`;
-      // console.log({ cpX, cpY });
-      if (checkpointTo.x == cpX && checkpointTo.y == cpY) {
-        checkpointReached = true;
-      }
-    }
-    return path;
   }
 }
 

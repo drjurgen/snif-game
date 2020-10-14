@@ -24,16 +24,13 @@ body {
   position: relative;
 }
 
+#snif {
+  z-index: -1;
+}
+
+.energy-source,
+#radiator_2_,
 #tv,
-#radiator_x5F_hot,
-#lightswitch_left_1_,
-#lightswitch_left_2_,
-#lightswitch_right_1_,
-#lightswitch_left_3_,
-#left_speaker,
-#right_speaker,
-#ipad,
-#fan,
 #floor_lamp {
   cursor: pointer;
   transition: all 0.2s ease-out;
@@ -44,25 +41,17 @@ body {
   stroke-width: 1;
 }
 
-/* #left_speaker,
-#right_speaker {
-  display: none;
-} */
-
+.energy-source:hover,
+#radiator_2_:hover,
 #tv:hover,
-#radiator_x5F_hot:hover,
-#lightswitch_left_1_:hover,
-#lightswitch_left_2_:hover,
-#lightswitch_right_1_:hover,
-#lightswitch_left_3_:hover,
-#left_speaker:hover,
-#right_speaker:hover,
-#ipad:hover,
-#fan:hover,
 #floor_lamp:hover {
   transform: scale(1.02);
   stroke-opacity: 1;
 }
+/* #left_speaker,
+#right_speaker {
+  display: none;
+} */
 
 #hidden-snif {
   width: 115px;
