@@ -4,11 +4,27 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+#start-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
 #game {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+#end-screen {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
 }
 
 #ui-elements {
@@ -19,7 +35,8 @@ body {
   width: 100%;
 }
 
-#living-room {
+#living-room,
+#bathroom {
   width: 50vw;
   position: relative;
 }
@@ -33,7 +50,10 @@ body {
 #tv,
 #floor_lamp,
 #lightswitch_left_1_,
-#lightswitch_left_3_ {
+#lightswitch_left_3_,
+#washer_2_,
+#shower,
+#sink_2_ {
   cursor: pointer;
   transition: all 0.2s ease-out;
   transform-box: fill-box;
@@ -48,7 +68,10 @@ body {
 #tv:hover,
 #floor_lamp:hover,
 #lightswitch_left_1_:hover,
-#lightswitch_left_3_:hover {
+#lightswitch_left_3_:hover,
+#washer_2_:hover,
+#shower:hover,
+#sink_2_:hover {
   transform: scale(1.02);
   stroke-opacity: 1;
 }
