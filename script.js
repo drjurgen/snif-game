@@ -40,17 +40,20 @@ let walkingToRightLight = false;
 
 let livingroomListeners = false;
 
+// GAME MECHANICS
 let score = 0;
 const timer = {
   timeCounter: 60,
   timeLeft: 600,
 };
 
+// ENERGY SOURCE PROTOTYPE
 const LivingRoomEnergySource = {
   id: "",
   isTurnedOn: false,
 };
 
+// ARRAY FOR ALL ENERGY SOURCES IN LIVING ROOM
 const allLivingRoomSources = [];
 
 function loadSVG() {
@@ -105,9 +108,9 @@ function randomizeLivingroom() {
   document.querySelector("#left_speaker").classList.add("energy-source");
   document.querySelector("#right_speaker").classList.add("energy-source");
   document.querySelector("#lightswitch_left_2_").classList.add("energy-source");
-  document.querySelector("#lightswitch_left_1_").classList.add("energy-source");
+  //document.querySelector("#lightswitch_left_1_").classList.add("energy-source");
   document.querySelector("#lightswitch_right_1_").classList.add("energy-source");
-  document.querySelector("#lightswitch_left_3_").classList.add("energy-source");
+  //document.querySelector("#lightswitch_left_3_").classList.add("energy-source");
 
   const powerStates = [true, false];
   document.querySelectorAll(".energy-source").forEach((svgObj) => {
@@ -270,39 +273,45 @@ function playLivingRoom() {
   }
 
   findSnifLocation();
+  checkSnifLocation();
+  checkLivingroomState();
 
-  if (walkingToTv === true) {
-    inFrontTv();
+  // CHECK SNIF LOCATION
+  function checkSnifLocation() {
+    if (walkingToTv === true) {
+      inFrontTv();
+    }
+
+    if (walkingToRadiator === true) {
+      inFrontRadiator();
+    }
+
+    if (walkingToSpeaker === true) {
+      inFrontSpeaker();
+    }
+
+    if (walkingToFloorLamp === true) {
+      inFrontFloorLamp();
+    }
+
+    if (walkingToIpad === true) {
+      inFrontIpad();
+    }
+
+    if (walkingToFan === true) {
+      inFrontFan();
+    }
+
+    if (walkingToLeftLight === true) {
+      inFrontLeftLight();
+    }
+
+    if (walkingToRightLight === true) {
+      inFrontRightLight();
+    }
   }
 
-  if (walkingToRadiator === true) {
-    inFrontRadiator();
-  }
-
-  if (walkingToSpeaker === true) {
-    inFrontSpeaker();
-  }
-
-  if (walkingToFloorLamp === true) {
-    inFrontFloorLamp();
-  }
-
-  if (walkingToIpad === true) {
-    inFrontIpad();
-  }
-
-  if (walkingToFan === true) {
-    inFrontFan();
-  }
-
-  if (walkingToLeftLight === true) {
-    inFrontLeftLight();
-  }
-
-  if (walkingToRightLight === true) {
-    inFrontRightLight();
-  }
-
+  // FIND SNIF COORDINATES
   function findSnifLocation() {
     svg = document.querySelector("svg");
 
@@ -347,19 +356,7 @@ function playLivingRoom() {
       //console.log("tv x and y:", { tvX, tvY });
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
 
-      //pause all walk animations on all snif-sprites
-      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
-        sprite.addEventListener("animationiteration", toggleWalk);
-        function toggleWalk() {
-          sprite.classList.remove("walk");
-          sprite.offsetHeight;
-          sprite.classList.add("walk");
-          sprite.style.animationPlayState = "paused";
-        }
-        setTimeout(function () {
-          sprite.removeEventListener("animationiteration", toggleWalk);
-        }, 500);
-      });
+      stopWalkAnimation();
 
       if (document.querySelector("#tv_static").classList.contains("hide")) {
         document.querySelector("#tv_static").classList.toggle("hide");
@@ -372,6 +369,10 @@ function playLivingRoom() {
 
         increaseScore();
       }
+
+      const tvObj = allLivingRoomSources.find((element) => element.id === "tv");
+      tvObj.isTurnedOn = !tvObj.isTurnedOn;
+      console.log(tvObj);
 
       walkingToTv = false;
     }
@@ -389,18 +390,7 @@ function playLivingRoom() {
       //console.log("snif x and y:", { snifX, snifY }, "radiator x and y:", { RadiatorX, RadiatorY });
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
 
-      //pause all walk animations on all snif-sprites
-      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
-        sprite.addEventListener("animationiteration", toggleWalk);
-        function toggleWalk() {
-          sprite.classList.remove("walk");
-          sprite.classList.add("walk");
-          sprite.style.animationPlayState = "paused";
-        }
-        setTimeout(function () {
-          sprite.removeEventListener("animationiteration", toggleWalk);
-        }, 500);
-      });
+      stopWalkAnimation();
 
       document.querySelector("#radiator_x5F_hot").classList.toggle("hide");
       if (document.querySelector("#radiator_x5F_hot").classList.contains("hide")) {
@@ -412,6 +402,10 @@ function playLivingRoom() {
         console.log(`snif tændte for radiatoren`);
         addPenalty();
       }
+
+      const radiatorObj = allLivingRoomSources.find((element) => element.id === "radiator_x5F_hot");
+      radiatorObj.isTurnedOn = !radiatorObj.isTurnedOn;
+      console.log(radiatorObj);
 
       walkingToRadiator = false;
     }
@@ -443,19 +437,7 @@ function playLivingRoom() {
     if (speakerX === 224 && speakerY === 252) {
       if (snifX > 210 && snifX < 235 && snifY > 240 && snifY < 260) {
         document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
-
-        //pause all walk animations on all snif-sprites
-        document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
-          sprite.addEventListener("animationiteration", toggleWalk);
-          function toggleWalk() {
-            sprite.classList.remove("walk");
-            sprite.classList.add("walk");
-            sprite.style.animationPlayState = "paused";
-          }
-          setTimeout(function () {
-            sprite.removeEventListener("animationiteration", toggleWalk);
-          }, 500);
-        });
+        stopWalkAnimation();
         toggleSpeaker();
         walkingToSpeaker = false;
       }
@@ -491,6 +473,7 @@ function playLivingRoom() {
     }
 
     clickedSpeaker.isTurnedOn = !clickedSpeaker.isTurnedOn;
+    console.log(clickedSpeaker);
     animateSpeaker(clickedSpeaker);
   }
 
@@ -504,19 +487,7 @@ function playLivingRoom() {
   function inFrontFloorLamp() {
     if (snifX > 265 && snifX < 280 && snifY > 430 && snifY < 445) {
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
-
-      //pause all walk animations on all snif-sprites
-      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
-        sprite.addEventListener("animationiteration", toggleWalk);
-        function toggleWalk() {
-          sprite.classList.remove("walk");
-          sprite.classList.add("walk");
-          sprite.style.animationPlayState = "paused";
-        }
-        setTimeout(function () {
-          sprite.removeEventListener("animationiteration", toggleWalk);
-        }, 500);
-      });
+      stopWalkAnimation();
 
       if (document.querySelector("#floor_lamp #light_1_").classList.contains("hide")) {
         document.querySelector("#floor_lamp #light_1_").classList.toggle("hide");
@@ -529,6 +500,10 @@ function playLivingRoom() {
 
         increaseScore();
       }
+
+      const floorLampObj = allLivingRoomSources.find((element) => element.id === "floor_lamp");
+      floorLampObj.isTurnedOn = !floorLampObj.isTurnedOn;
+      console.log(floorLampObj);
 
       walkingToFloorLamp = false;
     }
@@ -545,18 +520,7 @@ function playLivingRoom() {
     if (snifX > 215 && snifX < 235 && snifY > 330 && snifY < 360) {
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
 
-      //pause all walk animations on all snif-sprites
-      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
-        sprite.addEventListener("animationiteration", toggleWalk);
-        function toggleWalk() {
-          sprite.classList.remove("walk");
-          sprite.classList.add("walk");
-          sprite.style.animationPlayState = "paused";
-        }
-        setTimeout(function () {
-          sprite.removeEventListener("animationiteration", toggleWalk);
-        }, 500);
-      });
+      stopWalkAnimation();
 
       if (document.querySelector("#ipad_screen").classList.contains("hide")) {
         document.querySelector("#ipad_screen").classList.toggle("hide");
@@ -569,6 +533,10 @@ function playLivingRoom() {
 
         increaseScore();
       }
+
+      const ipadObj = allLivingRoomSources.find((element) => element.id === "ipad");
+      ipadObj.isTurnedOn = !ipadObj.isTurnedOn;
+      console.log(ipadObj);
 
       walkingToIpad = false;
     }
@@ -585,18 +553,7 @@ function playLivingRoom() {
     if (snifX > 240 && snifX < 255 && snifY > 375 && snifY < 385) {
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
 
-      //pause all walk animations on all snif-sprites
-      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
-        sprite.addEventListener("animationiteration", toggleWalk);
-        function toggleWalk() {
-          sprite.classList.remove("walk");
-          sprite.classList.add("walk");
-          sprite.style.animationPlayState = "paused";
-        }
-        setTimeout(function () {
-          sprite.removeEventListener("animationiteration", toggleWalk);
-        }, 500);
-      });
+      stopWalkAnimation();
 
       if (document.querySelector("#fan_blades").classList.contains("spin")) {
         document.querySelector("#fan_blades").classList.remove("spin");
@@ -609,6 +566,10 @@ function playLivingRoom() {
 
         addPenalty();
       }
+
+      const fanObj = allLivingRoomSources.find((element) => element.id === "fan");
+      fanObj.isTurnedOn = !fanObj.isTurnedOn;
+      console.log(fanObj);
 
       walkingToFan = false;
     }
@@ -624,19 +585,7 @@ function playLivingRoom() {
   function inFrontLeftLight() {
     if (snifX > 95 && snifX < 105 && snifY > 335 && snifY < 350) {
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
-
-      //pause all walk animations on all snif-sprites
-      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
-        sprite.addEventListener("animationiteration", toggleWalk);
-        function toggleWalk() {
-          sprite.classList.remove("walk");
-          sprite.classList.add("walk");
-          sprite.style.animationPlayState = "paused";
-        }
-        setTimeout(function () {
-          sprite.removeEventListener("animationiteration", toggleWalk);
-        }, 500);
-      });
+      stopWalkAnimation();
 
       if (document.querySelector("#lightswitch_left_2_").classList.contains("hide")) {
         document.querySelector("#left_ceiling_lamp_1_ #light_4_").classList.toggle("hide");
@@ -652,6 +601,10 @@ function playLivingRoom() {
         increaseScore();
       }
 
+      const leftLightObj = allLivingRoomSources.find((element) => element.id === "lightswitch_left_2_");
+      leftLightObj.isTurnedOn = !leftLightObj.isTurnedOn;
+      console.log(leftLightObj);
+
       walkingToLeftLight = false;
     }
   }
@@ -666,18 +619,7 @@ function playLivingRoom() {
   function inFrontRightLight() {
     if (snifX > 210 && snifX < 235 && snifY > 240 && snifY < 260) {
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
-      //pause all walk animations on all snif-sprites
-      document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
-        sprite.addEventListener("animationiteration", toggleWalk);
-        function toggleWalk() {
-          sprite.classList.remove("walk");
-          sprite.classList.add("walk");
-          sprite.style.animationPlayState = "paused";
-        }
-        setTimeout(function () {
-          sprite.removeEventListener("animationiteration", toggleWalk);
-        }, 500);
-      });
+      stopWalkAnimation();
 
       if (document.querySelector("#lightswitch_right_1_").classList.contains("hide")) {
         document.querySelector("#right_ceiling_lamp_1_ #light_5_").classList.toggle("hide");
@@ -693,16 +635,31 @@ function playLivingRoom() {
         increaseScore();
       }
 
+      const rightLightObj = allLivingRoomSources.find((element) => element.id === "lightswitch_right_1_");
+      rightLightObj.isTurnedOn = !rightLightObj.isTurnedOn;
+      console.log(rightLightObj);
+
       walkingToRightLight = false;
     }
   }
 
-  //
-  //
-  //
-  //
-  //
-  //
+  // STOP SNIF WALK ANIMATION
+  function stopWalkAnimation() {
+    //pause all walk animations on all snif-sprites
+    document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
+      sprite.addEventListener("animationiteration", toggleWalk);
+      function toggleWalk() {
+        sprite.classList.remove("walk");
+        sprite.classList.add("walk");
+        sprite.style.animationPlayState = "paused";
+      }
+      setTimeout(function () {
+        sprite.removeEventListener("animationiteration", toggleWalk);
+      }, 500);
+    });
+  }
+
+  // CHOOSE CORRECT SNIF SPRITE FOR WALKING DIRECTION
   function chooseSnifDirection(positionOnPath) {
     //console.log(positionOnPath);
     let snifDirection;
@@ -722,6 +679,7 @@ function playLivingRoom() {
     }
   }
 
+  // SHOW CORRECT SNIF SPRITE FOR WALKING DIRECTION
   function showSnifDirection(snifDirection) {
     if (snifDirection === "back right") {
       //console.log(snifDirection)
@@ -758,8 +716,23 @@ function playLivingRoom() {
     }
   }
 
+  // ADD TIME PENALTY FOR WRONGLY CLICKED OBJECT
   function addPenalty() {
     timer.timeLeft = timer.timeLeft + 5; // add penalty score
+  }
+
+  // CHECK IF ALL ENERGY SOURCES ARE TURNED OFF
+  function checkLivingroomState() {
+    if (allLivingRoomSources.every((obj) => obj.isTurnedOn === false)) {
+      console.log("room complete!");
+
+      setTimeout(function () {
+        document.querySelector("#living-room").style.animationDirection = "reverse";
+        document.querySelector("#living-room").classList.remove("fade-in");
+        void document.querySelector("#living-room").offsetHeight;
+        document.querySelector("#living-room").classList.add("fade-in");
+      }, 1000);
+    }
   }
 }
 

@@ -31,7 +31,9 @@ body {
 .energy-source,
 #radiator_2_,
 #tv,
-#floor_lamp {
+#floor_lamp,
+#lightswitch_left_1_,
+#lightswitch_left_3_ {
   cursor: pointer;
   transition: all 0.2s ease-out;
   transform-box: fill-box;
@@ -44,7 +46,9 @@ body {
 .energy-source:hover,
 #radiator_2_:hover,
 #tv:hover,
-#floor_lamp:hover {
+#floor_lamp:hover,
+#lightswitch_left_1_:hover,
+#lightswitch_left_3_:hover {
   transform: scale(1.02);
   stroke-opacity: 1;
 }
