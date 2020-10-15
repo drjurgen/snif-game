@@ -10,12 +10,12 @@
   </head>
   <body>
     <section id="start-screen">
-      <button id="start-button">START GAME</button>
+      <button id="start-button" class="bop-it">►</button>
     </section>
 
     <section id="game">
       <section id="ui-elements">
-        <p class="time">time left: 60</p>
+        <p class="time">60 sekunder tilbage</p>
         <p class="score hide">score: 0</p>
       </section>
       <section id="living-room"></section>
@@ -24,8 +24,11 @@
     </section>
 
     <section id="end-screen">
-      <h1 class="time-score"></h1>
-      <button id="play-again">Play again?</button>
+      <div id="autograf-container"></div>
+      <div id="text-container">
+        <h1 class="time-score"></h1>
+      </div>
+      <button id="play-again" class="bop-it">►</button>
     </section>
 
     <audio loop src="sounds/background_music.mp3" id="background_music"></audio>

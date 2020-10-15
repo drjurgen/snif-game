@@ -20,13 +20,64 @@ button {
   justify-content: center;
   width: 100vw;
   height: 100vh;
+  background-image: url("start.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+#start-button,
+#play-again {
+  position: absolute;
+  right: 30vw;
+  bottom: 10vh;
+  height: 300px;
+  width: 300px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 8rem;
+  cursor: pointer;
+  background-color: #f47c4a;
+  color: #fff;
+  text-align: center;
+  padding-top: 20px;
+  padding-left: 25px;
+}
+
+#play-again {
+  position: initial;
+}
+
+#start-button:focus {
+  outline: none;
+}
+
+.bop-it {
+  animation: bop_it_kf 0.6s ease-in-out infinite alternate forwards;
+}
+
+@keyframes bop_it_kf {
+  0% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+  100% {
+    transform: scale(1.1);
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
+    background-color: #f2804f;
+  }
 }
 
 #game {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: column-reverse;
+  justify-content: space-around;
   align-items: center;
+  position: relative;
 }
 
 #end-screen {
@@ -36,6 +87,24 @@ button {
   justify-content: center;
   width: 100vw;
   height: 100vh;
+  background-image: url("endscreen.png");
+  color: #fff;
+  text-shadow: 1px;
+}
+
+#end-screen #text-container {
+  max-width: 600px;
+  text-align: center;
+  text-shadow: 2px 2px #333;
+  font-size: 2rem;
+}
+
+#autograf-container {
+  max-width: 500px;
+}
+
+#autograf-container img {
+  width: 100%;
 }
 
 #ui-elements {
@@ -43,12 +112,20 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  width: 100%;
+  width: 20%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100px;
+  background-color: #f2804f;
+  color: #fff;
+  border-radius: 0 0 0 25px;
+  font-size: 2rem;
 }
 
 #living-room,
 #bathroom {
-  width: 50vw;
+  width: 55.5vw;
   position: relative;
 }
 

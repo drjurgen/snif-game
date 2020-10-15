@@ -62,7 +62,7 @@ let sinkRunning = false;
 let score = 0;
 const timer = {
   timeCounter: 60,
-  timeLeft: 60,
+  timeLeft: 5,
   totalTimeScore: "",
 };
 
@@ -85,7 +85,7 @@ const allLivingRoomSources = [];
 const allBathroomSources = [];
 
 // CURRENT PLAYING LEVEL
-let currentLevel = "bathroom";
+let currentLevel = "livingroom";
 
 // SETUP GAME
 function setupGame() {
@@ -1369,7 +1369,7 @@ function addPenalty() {
 }
 
 function showTimeLeft() {
-  document.querySelector(".time").textContent = `time left: ${timer.timeLeft}`;
+  document.querySelector(".time").textContent = `${timer.timeLeft} sekunder tilbage`;
 }
 
 function endGame() {
@@ -1394,7 +1394,11 @@ function endGame() {
     const timeScore = document.querySelector("#end-screen .time-score");
 
     if (timer.timeLeft > 0) {
-      timeScore.textContent = `you finished the game in: ${timer.totalTimeScore} seconds!`;
+      timeScore.textContent = `Godt Klaret! Du klarede det på ${timer.totalTimeScore} sekunder!`;
+      const autograph = document.createElement("img");
+      autograph.src = `snif-autograf.png`;
+      autograph.alt = "snif underskrift";
+      document.querySelector("#autograf-container").appendChild(autograph);
       console.log(`You finished the game in ${timer.totalTimeScore} seconds!`);
     } else if (timer.timeLeft === 0) {
       timeScore.textContent = `Du nåede ikke slukke alle strømkilderne i tide`;
@@ -1445,6 +1449,6 @@ function resetGame() {
   walkingToShower = false;
   walkingToSink = false;
 
-  document.querySelector(".time").textContent = `time left: 60`;
+  document.querySelector(".time").textContent = `60 sekunder tilbage`;
   startGame();
 }
