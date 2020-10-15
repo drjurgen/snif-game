@@ -25,6 +25,7 @@ let walkingToRadiator = false;
 let speakerX;
 let speakerY;
 let clickedSpeaker;
+let speakerCounter = 0;
 let walkingToSpeaker = false;
 
 // FLOOR LAMP
@@ -61,7 +62,7 @@ let sinkRunning = false;
 let score = 0;
 const timer = {
   timeCounter: 60,
-  timeLeft: 600,
+  timeLeft: 60,
   totalTimeScore: "",
 };
 
@@ -84,7 +85,7 @@ const allLivingRoomSources = [];
 const allBathroomSources = [];
 
 // CURRENT PLAYING LEVEL
-let currentLevel = "livingroom";
+let currentLevel = "bathroom";
 
 // SETUP GAME
 function setupGame() {
@@ -156,8 +157,10 @@ function loadSnif() {
         randomizeLivingroom(); // randomize states of energy sources
         runLoop(); // run the game loop
       } else if (currentLevel === "bathroom") {
-        prepareBathroom();
-        randomizeBathroom(); // randomize states of energy sources
+        setTimeout(function () {
+          prepareBathroom();
+          randomizeBathroom(); // randomize states of energy sources
+        }, 500);
         if (livingroomListeners === true) {
         } else if (livingroomListeners === false) {
           runLoop(); // run the game loop
@@ -232,7 +235,7 @@ function randomizeLivingroom() {
   //document.querySelector("#lightswitch_left_3_").classList.add("energy-source");
 
   const powerStates = [true, false];
-  document.querySelectorAll(".energy-source").forEach((svgObj) => {
+  document.querySelectorAll("#living-room .energy-source").forEach((svgObj) => {
     const isTurnedOn = powerStates[Math.round(Math.random(powerStates.length))];
     const energyObj = Object.create(LivingRoomEnergySource);
     energyObj.id = svgObj.id;
@@ -320,13 +323,23 @@ function randomizeLivingroom() {
 
 function animateSpeaker(energyObj) {
   let noteId;
+
   if (energyObj.id === "left_speaker") {
+    console.log("left");
     noteId = "1";
   } else {
+    console.log("right");
+
     noteId = "2";
   }
 
   if (energyObj.isTurnedOn === true) {
+    //play music
+    document.querySelector("#background_music").play();
+    document.querySelector("#background_music").volume = 0.1;
+
+    speakerCounter++;
+
     // remove hide from notes
 
     // animate notes
@@ -345,6 +358,12 @@ function animateSpeaker(energyObj) {
     }, 2000);
     document.querySelector(`#${energyObj.id}_upper`).classList.add("scale2"); // add animation to speaker body
   } else {
+    speakerCounter--;
+    console.log(speakerCounter);
+    if (speakerCounter === 0) {
+      document.querySelector("#background_music").pause();
+    }
+
     document.querySelectorAll(`#${energyObj.id} #music_x5F_note_x5F_r_${noteId}`).forEach((g) => g.classList.toggle("hide"));
     document.querySelector(`#${energyObj.id}_upper`).classList.remove("scale2");
   }
@@ -792,16 +811,16 @@ function playLivingRoom() {
 
   // CHOOSE CORRECT SNIF SPRITE FOR WALKING DIRECTION
   function chooseSnifDirection(positionOnPath) {
-    //console.log(positionOnPath);
+    // console.log(positionOnPath);
     let snifDirection;
 
     if (positionOnPath < 310 && positionOnPath > 200) {
       snifDirection = "back right";
       showSnifDirection(snifDirection);
-    } else if (positionOnPath < 210 && positionOnPath > 110) {
+    } else if ((positionOnPath < 210 && positionOnPath > 110) || positionOnPath > 650) {
       snifDirection = "front right";
       showSnifDirection(snifDirection);
-    } else if (positionOnPath < 100) {
+    } else if (positionOnPath < 100 || positionOnPath > 482) {
       snifDirection = "front left";
       showSnifDirection(snifDirection);
     } else if (positionOnPath < 50) {
@@ -854,7 +873,8 @@ function playLivingRoom() {
 
   // CHECK IF ALL ENERGY SOURCES ARE TURNED OFF
   function checkLivingroomState() {
-    if (allLivingRoomSources.every((obj) => obj.isTurnedOn === false)) {
+    const allTurnedOff = (obj) => obj.isTurnedOn === false;
+    if (allLivingRoomSources.every(allTurnedOff)) {
       console.log("room complete!");
       hideLivingRoom();
     }
@@ -866,9 +886,12 @@ function playLivingRoom() {
       document.querySelector("#living-room").classList.remove("fade-in");
       void document.querySelector("#living-room").offsetHeight;
       document.querySelector("#living-room").classList.add("fade-in");
-      document.querySelector("#living-room").addEventListener("animationend", () => {
+
+      document.querySelector("#living-room").addEventListener("animationend", hideRoom);
+      function hideRoom() {
         document.querySelector("#living-room").classList.add("hide");
-      });
+        document.querySelector("#living-room").removeEventListener("animationend", hideRoom);
+      }
 
       setTimeout(showBathroom, 1500);
     }, 1000);
@@ -1029,6 +1052,13 @@ function randomizeBathroom() {
     energyObj.isTurnedOn = isTurnedOn;
     allBathroomSources.push(energyObj);
 
+    if (allBathroomSources.every((obj) => obj.isTurnedOn === false)) {
+      console.log("all objects were false - chose a fallback");
+      if (energyObj.id === "shower") {
+        energyObj.isTurnedOn = true;
+      }
+    }
+
     // random washer
     if (energyObj.id === "washer_2_" && energyObj.isTurnedOn === false) {
       document.querySelector("#washer_2_").classList.remove("vibrate2");
@@ -1075,15 +1105,11 @@ function playBathRoom() {
       document.querySelector("#shower").addEventListener("click", goToShower);
       document.querySelector("#sink_2_").addEventListener("click", goToSink);
     }
-
-    setTimeout(function () {
-      //endGame();
-      console.log("idk");
-    }, 7500);
   }
 
   findSnifLocation();
   checkSnifLocation();
+  setTimeout(checkBathroomState, 100);
 
   function checkSnifLocation() {
     // sink, washing machine, shower
@@ -1303,11 +1329,27 @@ function playBathRoom() {
     }
   }
 
-  // idk
-  // idk
-  // idk
-  // idk
-  // idk
+  // CHECK IF ALL ENERGY SOURCES ARE TURNED OFF
+  function checkBathroomState() {
+    const allTurnedOff = (obj) => obj.isTurnedOn === false;
+    if (allBathroomSources.every(allTurnedOff) && allBathroomSources.length > 0) {
+      console.log("room complete!");
+      document.querySelectorAll("audio").forEach((audio) => audio.pause());
+      setTimeout(endGame, 1500);
+    }
+  }
+
+  function hideBathroom() {
+    setTimeout(function () {
+      document.querySelector("#bathroom").style.animationDirection = "reverse";
+      document.querySelector("#bathroom").classList.remove("fade-in");
+      void document.querySelector("#bathroom").offsetHeight;
+      document.querySelector("#bathroom").classList.add("fade-in");
+      document.querySelector("#bathroom").addEventListener("animationend", () => {
+        document.querySelector("#bathroom").classList.add("hide");
+      });
+    }, 1000);
+  }
 }
 
 //
@@ -1332,8 +1374,7 @@ function showTimeLeft() {
 
 function endGame() {
   if (isPlaying === true) {
-    isPlaying = false;
-    console.log("game finished");
+    document.querySelectorAll("audio").forEach((audio) => audio.pause());
 
     document.querySelector("#game").style.animationDirection = "reverse";
     document.querySelector("#game").classList.remove("fade-in");
@@ -1347,10 +1388,17 @@ function endGame() {
       document.querySelector("#end-screen").style.display = "flex";
     }
 
+    isPlaying = false;
+    console.log("game complete");
     timer.totalTimeScore = -timer.timeLeft + 60;
     const timeScore = document.querySelector("#end-screen .time-score");
-    timeScore.textContent = `you finished the game in: ${timer.totalTimeScore} seconds!`;
-    console.log(`You finished the game in ${timer.totalTimeScore} seconds!`);
+
+    if (timer.timeLeft > 0) {
+      timeScore.textContent = `you finished the game in: ${timer.totalTimeScore} seconds!`;
+      console.log(`You finished the game in ${timer.totalTimeScore} seconds!`);
+    } else if (timer.timeLeft === 0) {
+      timeScore.textContent = `Du nåede ikke slukke alle strømkilderne i tide`;
+    }
   }
 
   document.querySelector("#play-again").addEventListener("click", resetGame);
@@ -1380,6 +1428,7 @@ function resetGame() {
   walkingToRadiator = false;
   clickedSpeaker = "";
   walkingToSpeaker = false;
+  speakerCounter = 0;
   walkingToFloorLamp = false;
   walkingToIpad = false;
   walkingToFan = false;
@@ -1388,6 +1437,7 @@ function resetGame() {
   livingroomListeners = false;
 
   allLivingRoomSources.splice(0, 9);
+  allBathroomSources.splice(0, 3);
 
   // RESET BATHROOM
   bathroomListeners = false;
@@ -1396,6 +1446,5 @@ function resetGame() {
   walkingToSink = false;
 
   document.querySelector(".time").textContent = `time left: 60`;
-
   startGame();
 }
