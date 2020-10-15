@@ -381,10 +381,10 @@ button {
   }
 
   70% {
-    transform: translateY(1.8vw);
+    transform: translateY(0.4vw);
   }
   100% {
-    transform: translateY(2vw);
+    transform: translateY(0.6vw);
   }
 }
 
@@ -411,7 +411,7 @@ button {
   }
 
   100% {
-    transform: translateY(24.5vw);
+    transform: translateY(8vw);
   }
 }
 
