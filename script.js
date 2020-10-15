@@ -2,6 +2,8 @@
 
 window.addEventListener("DOMContentLoaded", setupGame);
 
+let isPlaying = false;
+
 let svg;
 
 // SNIF
@@ -81,6 +83,8 @@ function setupGame() {
 
 // STATRT THE GAME
 function startGame() {
+  isPlaying = true;
+
   document.querySelector("#start-screen").style.display = "none";
   document.querySelector("#game").style.display = "flex";
   if (currentLevel === "livingroom") {
@@ -154,35 +158,37 @@ function loadSnif() {
 }
 
 function runLoop() {
-  if (currentLevel === "livingroom") {
-    if (document.querySelector("#living-room #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {
-    } else {
-      playLivingRoom();
-    }
-  } else if (currentLevel === "bathroom") {
-    if (document.querySelector("#bathroom #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {
-    } else {
-      playBathRoom();
-    }
-  }
-
-  // check time left
-  if (timer.timeCounter > 0) {
-    timer.timeCounter--;
-    if (timer.timeCounter === 0) {
-      // console.log("one second passed");
-      timer.timeCounter = 60;
-      if (timer.timeLeft > 0) {
-        timer.timeLeft--;
-        showTimeLeft();
+  if (isPlaying === true) {
+    if (currentLevel === "livingroom") {
+      if (document.querySelector("#living-room #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {
+      } else {
+        playLivingRoom();
+      }
+    } else if (currentLevel === "bathroom") {
+      if (document.querySelector("#bathroom #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {
+      } else {
+        playBathRoom();
       }
     }
-  }
 
-  if (timer.timeLeft > 0) {
-    requestAnimationFrame(runLoop);
-  } else {
-    endGame();
+    // check time left
+    if (timer.timeCounter > 0) {
+      timer.timeCounter--;
+      if (timer.timeCounter === 0) {
+        // console.log("one second passed");
+        timer.timeCounter = 60;
+        if (timer.timeLeft > 0) {
+          timer.timeLeft--;
+          showTimeLeft();
+        }
+      }
+    }
+
+    if (timer.timeLeft > 0) {
+      requestAnimationFrame(runLoop);
+    } else {
+      endGame();
+    }
   }
 }
 
@@ -327,6 +333,8 @@ function animateSpeaker(energyObj) {
 
 function playLivingRoom() {
   if (livingroomListeners === false) {
+    document.querySelector("#living-room").classList.remove("hide");
+
     livingroomListeners = true;
 
     addGuiEvents();
@@ -811,9 +819,12 @@ function playLivingRoom() {
       document.querySelector("#living-room").classList.remove("fade-in");
       void document.querySelector("#living-room").offsetHeight;
       document.querySelector("#living-room").classList.add("fade-in");
-      document.querySelector("#living-room").addEventListener("animationend", () => {
+      document.querySelector("#living-room").addEventListener("animationend", hideRoom);
+
+      function hideRoom() {
         document.querySelector("#living-room").classList.add("hide");
-      });
+        document.querySelector("#living-room").removeEventListener("animationend", hideRoom);
+      }
 
       setTimeout(showBathroom, 1500);
     }, 1000);
@@ -846,6 +857,10 @@ function randomizeBathroom() {
 
 function playBathRoom() {
   if (bathroomListeners === false) {
+    document.querySelector("#bathroom #snif").style.animationPlayState = "paused";
+    document.querySelector("#bathroom").style.display = "block";
+    document.querySelector("#bathroom").classList.remove("hide");
+
     bathroomListeners = true;
 
     addGuiEvents();
@@ -858,6 +873,7 @@ function playBathRoom() {
 
     setTimeout(function () {
       endGame();
+      console.log("idk");
     }, 7500);
   }
 
@@ -1038,21 +1054,69 @@ function showTimeLeft() {
 }
 
 function endGame() {
-  console.log("game finished");
-  document.querySelector("#game").style.animationDirection = "reverse";
-  document.querySelector("#game").classList.remove("fade-in");
-  void document.querySelector("#game").offsetHeight;
-  document.querySelector("#game").classList.add("fade-in");
-  document.querySelector("#game").addEventListener("animationend", () => {
-    document.querySelector("#game").style.display = "none";
-    document.querySelector("#end-screen").style.display = "flex";
-  });
+  if (isPlaying === true) {
+    isPlaying = false;
+    console.log("game finished");
 
-  timer.totalTimeScore = -timer.timeLeft + 60;
+    document.querySelector("#game").style.animationDirection = "reverse";
+    document.querySelector("#game").classList.remove("fade-in");
+    void document.querySelector("#game").offsetHeight;
+    document.querySelector("#game").classList.add("fade-in");
+    document.querySelector("#game").addEventListener("animationend", hideGameSection);
 
-  const timeScore = document.createElement("h1");
-  timeScore.textContent = `you finished the game in: ${timer.totalTimeScore} seconds!`;
+    function hideGameSection() {
+      document.querySelector("#game").removeEventListener("animationend", hideGameSection);
+      document.querySelector("#game").style.display = "none";
+      document.querySelector("#end-screen").style.display = "flex";
+    }
 
-  document.querySelector("#end-screen").appendChild(timeScore);
-  console.log(`You finished the game in ${timer.totalTimeScore} seconds!`);
+    timer.totalTimeScore = -timer.timeLeft + 60;
+    const timeScore = document.querySelector("#end-screen .time-score");
+    timeScore.textContent = `you finished the game in: ${timer.totalTimeScore} seconds!`;
+    console.log(`You finished the game in ${timer.totalTimeScore} seconds!`);
+  }
+
+  document.querySelector("#play-again").addEventListener("click", resetGame);
+}
+
+function resetGame() {
+  document.querySelector;
+  document.querySelector("#end-screen").style.display = "none";
+  document.querySelector("#game").style.display = "flex";
+  document.querySelector("#game").style.animationDirection = "normal";
+  document.querySelector("#game").style.display = "flex";
+  document.querySelector("#living-room").style.animationDirection = "normal";
+  document.querySelector("#living-room").classList.remove("fade-in");
+  document.querySelector("#living-room").classList.remove("hide");
+  document.querySelector("#bathroom").classList.remove("fade-in");
+  document.querySelector("#bathroom").style.display = "none";
+
+  // RESET CORE MECHANICS
+  isPlaying = true;
+  timer.timeCounter = 60;
+  timer.timeLeft = 60;
+  timer.totalTimeScore = "";
+  currentLevel = "livingroom";
+
+  // RESET LIVINGROOM
+  walkingToTv = false;
+  walkingToRadiator = false;
+  clickedSpeaker = "";
+  walkingToSpeaker = false;
+  walkingToFloorLamp = false;
+  walkingToIpad = false;
+  walkingToFan = false;
+  walkingToLeftLight = false;
+  walkingToRightLight = false;
+  livingroomListeners = false;
+
+  allLivingRoomSources.splice(0, 9);
+
+  // RESET BATHROOM
+  bathroomListeners = false;
+  walkingToWashing = false;
+  walkingToShower = false;
+  walkingToSink = false;
+
+  startGame();
 }
