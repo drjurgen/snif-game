@@ -143,8 +143,7 @@ function loadSnif() {
       } else if (currentLevel === "bathroom") {
         prepareBathroom();
         randomizeBathroom(); // randomize states of energy sources
-        if (livingroomListeners === true) {
-        } else if (livingroomListeners === false) {
+        if (livingroomListeners === true) {} else if (livingroomListeners === false) {
           runLoop(); // run the game loop
         }
 
@@ -155,13 +154,11 @@ function loadSnif() {
 
 function runLoop() {
   if (currentLevel === "livingroom") {
-    if (document.querySelector("#living-room #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {
-    } else {
+    if (document.querySelector("#living-room #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {} else {
       playLivingRoom();
     }
   } else if (currentLevel === "bathroom") {
-    if (document.querySelector("#bathroom #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {
-    } else {
+    if (document.querySelector("#bathroom #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {} else {
       playBathRoom();
     }
   }
@@ -328,8 +325,8 @@ function animateSpeaker(energyObj) {
 function playLivingRoom() {
   if (livingroomListeners === false) {
     livingroomListeners = true;
-
     addGuiEvents();
+
     function addGuiEvents() {
       // add eventlisteners
       document.querySelector("#tv").addEventListener("click", goToTv); // add tv eventlistener
@@ -392,6 +389,7 @@ function playLivingRoom() {
     svg = document.querySelector("svg");
 
     calcSnifCoordinates();
+
     function calcSnifCoordinates() {
       //snif vector coordinates
       snif = document.querySelector("#snif");
@@ -524,6 +522,7 @@ function playLivingRoom() {
         //pause all walk animations on all snif-sprites
         document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
           sprite.addEventListener("animationiteration", toggleWalk);
+
           function toggleWalk() {
             sprite.classList.remove("walk");
             sprite.classList.add("walk");
@@ -541,9 +540,12 @@ function playLivingRoom() {
 
   function toggleSpeaker() {
     if (clickedSpeaker.isTurnedOn === true) {
+      document.querySelector("#background_music").play();
       increaseScore();
       console.log(`snif slukkede for ${clickedSpeaker.id}`);
     } else {
+      document.querySelector("#background_music").pause();
+
       console.log(`snif tændte for ${clickedSpeaker.id}`);
       addPenalty();
     }
@@ -724,6 +726,7 @@ function playLivingRoom() {
     //pause all walk animations on all snif-sprites
     document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
       sprite.addEventListener("animationiteration", toggleWalk);
+
       function toggleWalk() {
         sprite.classList.remove("walk");
         sprite.classList.add("walk");
@@ -849,6 +852,7 @@ function playBathRoom() {
     bathroomListeners = true;
 
     addGuiEvents();
+
     function addGuiEvents() {
       // add eventlisteners
       document.querySelector("#washer_2_").addEventListener("click", goToWashing);
@@ -884,6 +888,7 @@ function playBathRoom() {
     svg = document.querySelector("#bathroom svg");
 
     calcSnifCoordinates();
+
     function calcSnifCoordinates() {
       //snif vector coordinates
       snif = document.querySelector("#bathroom #snif");
@@ -953,6 +958,7 @@ function playBathRoom() {
     //pause all walk animations on all snif-sprites
     document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
       sprite.addEventListener("animationiteration", toggleWalk);
+
       function toggleWalk() {
         sprite.classList.remove("walk");
         sprite.classList.add("walk");
