@@ -47,7 +47,7 @@ function addAnimationClasses() {
 
 
   //add eventlisteners to GUI elements
-  animateSpeaker();
+  // animateSpeaker();
   animateFan();
   addGuiEvents();
   //runLoop();
@@ -87,7 +87,9 @@ function animateSpeaker() {
 }
 
 function animateFan() {
-  document.querySelector("#fan_blades").classList.add("spin");
+  //  document.querySelector("#fan_upper_1_").classList.add("spin");
+  document.querySelector("#fan").classList.toggle("vibrate3");
+
 
 }
 
@@ -180,7 +182,7 @@ function addGuiEvents() {
   document.querySelector("#fan").addEventListener("click", offFan);
 
   function offFan() {
-    document.querySelector("#fan_blades").classList.toggle("spin");
+    document.querySelector("#fan").classList.toggle("vibrate3");
   }
 
   //off floor lamp
@@ -203,6 +205,8 @@ function addAnimationBathroom() {
 
   document.querySelector("#washer_2_").classList.toggle("vibrate2");
   document.querySelector("#washing_machine_sfx").play();
+  document.querySelector("#washing_machine_sfx").volume = 1;
+
 
   document.querySelector("#dryer_2_").classList.toggle("vibrate2");
   document.querySelector("#dryer_sfx").play();

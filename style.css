@@ -83,7 +83,8 @@ display: none;
 
 .spin {
   position: relative;
-  animation:spin_kf 2s linear infinite;
+  animation:spin_kf 2s alternate;
+  animation-iteration-count: infinite;
   transform-origin: center center;
   transform-box:fill-box;
 
@@ -91,9 +92,34 @@ display: none;
 }
 
 @keyframes spin_kf {
+  from{
+    opacity:1;
+  }
  100%{
-   transform: rotate(360deg) ;
-   ;
+  opacity:0;
+   transform: translateX(1vw) rotateY(90deg) ;
+  
+ }
+}
+.spin2 {
+  position: relative;
+  animation:spin2_kf 2s linear infinite;
+  transform-origin: center center;
+  transform-box:fill-box;
+
+  
+}
+
+@keyframes spin2_kf {
+  from{
+    opacity:0;
+    transform: rotateY(90deg) ;
+
+  }
+ 100%{
+  opacity:1;
+  transform: rotateY(0deg) ;
+  
  }
 }
 
@@ -172,12 +198,29 @@ display: none;
 20%, 100% {
     transform: translate3d(0, 0, 0);
 }
+}
+
+.vibrate3 {
+  animation: vibrate3_kf .1s linear infinite;
+  transform-origin: center ;
+  transform-box: fill-box;
+}
+@keyframes vibrate3_kf {
+
+   33%{
+    transform: translate3d(-1px, -1px, 0) ;
+}
+66%{
+    transform: translate3d(1px, 1px,0) ;
+}
+99% {
+    transform: translate3d(0, 0, 0);
+}
 
   
 }
-
 .drop {
-  animation: drop_kf 1s linear backwards;
+  animation: drop_kf 1s ease-in-out backwards;
 }
 @keyframes drop_kf {
   0% {
@@ -212,7 +255,7 @@ display: none;
 }
 
 .drop_shower {
-  animation: drop_shower_kf .6s linear backwards;
+  animation: drop_shower_kf .6s ease-in-out backwards;
 }
 @keyframes drop_shower_kf {
   0% {
