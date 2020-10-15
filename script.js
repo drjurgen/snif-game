@@ -59,7 +59,7 @@ let walkingToSink = false;
 let score = 0;
 const timer = {
   timeCounter: 60,
-  timeLeft: 60,
+  timeLeft: 600,
   totalTimeScore: "",
 };
 
@@ -73,7 +73,7 @@ const LivingRoomEnergySource = {
 const allLivingRoomSources = [];
 
 // CURRENT PLAYING LEVEL
-let currentLevel = "bathroom";
+let currentLevel = "livingroom";
 
 // SETUP GAME
 function setupGame() {
@@ -745,16 +745,16 @@ function playLivingRoom() {
 
   // CHOOSE CORRECT SNIF SPRITE FOR WALKING DIRECTION
   function chooseSnifDirection(positionOnPath) {
-    //console.log(positionOnPath);
+    // console.log(positionOnPath);
     let snifDirection;
 
     if (positionOnPath < 310 && positionOnPath > 200) {
       snifDirection = "back right";
       showSnifDirection(snifDirection);
-    } else if (positionOnPath < 210 && positionOnPath > 110) {
+    } else if ((positionOnPath < 210 && positionOnPath > 110) || positionOnPath > 650) {
       snifDirection = "front right";
       showSnifDirection(snifDirection);
-    } else if (positionOnPath < 100) {
+    } else if (positionOnPath < 100 || positionOnPath > 482) {
       snifDirection = "front left";
       showSnifDirection(snifDirection);
     } else if (positionOnPath < 50) {
@@ -872,7 +872,7 @@ function playBathRoom() {
     }
 
     setTimeout(function () {
-      endGame();
+      //endGame();
       console.log("idk");
     }, 7500);
   }
@@ -982,16 +982,13 @@ function playBathRoom() {
 
   // CHOOSE CORRECT SNIF SPRITE FOR WALKING DIRECTION
   function chooseSnifDirection(positionOnPath) {
-    //console.log(positionOnPath);
+    // console.log(positionOnPath);
     let snifDirection;
 
-    if (positionOnPath < 310 && positionOnPath > 200) {
-      snifDirection = "back right";
-      showSnifDirection(snifDirection);
-    } else if (positionOnPath < 210 && positionOnPath > 110) {
+    if ((positionOnPath > 0 && positionOnPath < 141) || positionOnPath > 869) {
       snifDirection = "front right";
       showSnifDirection(snifDirection);
-    } else if (positionOnPath < 100) {
+    } else if (positionOnPath > 141 || positionOnPath < 880) {
       snifDirection = "front left";
       showSnifDirection(snifDirection);
     } else if (positionOnPath < 50) {
