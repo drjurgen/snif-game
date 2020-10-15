@@ -24,6 +24,8 @@ let speakerX;
 let speakerY;
 let clickedSpeaker;
 let walkingToSpeaker = false;
+let speakerCounter = 0;
+
 
 // FLOOR LAMP
 let walkingToFloorLamp = false;
@@ -292,13 +294,25 @@ function randomizeLivingroom() {
 
 function animateSpeaker(energyObj) {
   let noteId;
+
   if (energyObj.id === "left_speaker") {
+    console.log("left")
     noteId = "1";
+
+
   } else {
+    console.log("right")
+
     noteId = "2";
   }
 
   if (energyObj.isTurnedOn === true) {
+    //play music 
+    document.querySelector("#background_music").play();
+    document.querySelector("#background_music").volume = .1;
+
+    speakerCounter++;
+
     // remove hide from notes
 
     // animate notes
@@ -317,6 +331,13 @@ function animateSpeaker(energyObj) {
     }, 2000);
     document.querySelector(`#${energyObj.id}_upper`).classList.add("scale2"); // add animation to speaker body
   } else {
+    speakerCounter--;
+    console.log(speakerCounter)
+    if (speakerCounter === 0) {
+      document.querySelector("#background_music").pause();
+
+    }
+
     document.querySelectorAll(`#${energyObj.id} #music_x5F_note_x5F_r_${noteId}`).forEach((g) => g.classList.toggle("hide"));
     document.querySelector(`#${energyObj.id}_upper`).classList.remove("scale2");
   }
@@ -540,11 +561,14 @@ function playLivingRoom() {
 
   function toggleSpeaker() {
     if (clickedSpeaker.isTurnedOn === true) {
-      document.querySelector("#background_music").play();
+      console.log("speaker on")
+
       increaseScore();
       console.log(`snif slukkede for ${clickedSpeaker.id}`);
     } else {
-      document.querySelector("#background_music").pause();
+      console.log("speaker off")
+
+      //document.querySelector("#background_music").play();
 
       console.log(`snif tændte for ${clickedSpeaker.id}`);
       addPenalty();
@@ -668,12 +692,16 @@ function playLivingRoom() {
       if (document.querySelector("#lightswitch_left_2_").classList.contains("hide")) {
         document.querySelector("#left_ceiling_lamp_1_ #light_4_").classList.toggle("hide");
         document.querySelector("#lightswitch_left_2_").classList.toggle("hide");
+        document.querySelector("#lightswitch_on_sfx").play();
+
         console.log(`snif tændte for venstre loftslampe`);
 
         addPenalty();
       } else if (!document.querySelector("#lightswitch_left_2_").classList.contains("hide")) {
         document.querySelector("#left_ceiling_lamp_1_ #light_4_").classList.toggle("hide");
         document.querySelector("#lightswitch_left_2_").classList.toggle("hide");
+        document.querySelector("#lightswitch_off_sfx").play();
+
         console.log(`snif slukkede for venstre loftslampe`);
 
         increaseScore();
@@ -695,6 +723,7 @@ function playLivingRoom() {
   }
 
   function inFrontRightLight() {
+    console.log("yo")
     if (snifX > 210 && snifX < 235 && snifY > 240 && snifY < 260) {
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
       stopWalkAnimation();
@@ -702,12 +731,16 @@ function playLivingRoom() {
       if (document.querySelector("#lightswitch_right_1_").classList.contains("hide")) {
         document.querySelector("#right_ceiling_lamp_1_ #light_5_").classList.toggle("hide");
         document.querySelector("#lightswitch_right_1_").classList.toggle("hide");
+        document.querySelector("#lightswitch_on_sfx").play();
+
         console.log(`snif tændte for højre loftslampe`);
 
         addPenalty();
       } else if (!document.querySelector("#lightswitch_right_1_").classList.contains("hide")) {
         document.querySelector("#right_ceiling_lamp_1_ #light_5_").classList.toggle("hide");
         document.querySelector("#lightswitch_right_1_").classList.toggle("hide");
+        document.querySelector("#lightswitch_off_sfx").play();
+
         console.log(`snif slukkede for højre loftslampe`);
 
         increaseScore();
