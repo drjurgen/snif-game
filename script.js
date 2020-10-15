@@ -224,8 +224,14 @@ function randomizeLivingroom() {
     // random tv
     if (energyObj.id === "tv" && energyObj.isTurnedOn === true) {
       document.querySelector("#tv_static").classList.remove("hide");
+      document.querySelector("#static_sfx").play();
+      document.querySelector("#static_sfx").volume = .05;
+
+
     } else if (energyObj.id === "tv" && energyObj.isTurnedOn === false) {
       document.querySelector("#tv_static").classList.add("hide");
+      document.querySelector("#static_sfx").pause();
+
     }
 
     // random speakers
@@ -247,10 +253,16 @@ function randomizeLivingroom() {
     if (energyObj.id === "radiator_x5F_hot" && energyObj.isTurnedOn === true) {
       document.querySelector(`#${energyObj.id}`).classList.remove("hide");
       document.querySelector(`#radiator_2_`).classList.add("hide");
+      document.querySelector(`#radiator_sfx`).play();
+      document.querySelector(`#radiator_sfx`).volume = .02;
+
     } else if (energyObj.id === "radiator_x5F_hot" && energyObj.isTurnedOn === false) {
       document.querySelector(`#${energyObj.id}`).classList.add("hide");
       document.querySelector(`#radiator_2_`).classList.remove("hide");
+      document.querySelector(`#radiator_sfx`).pause();
+
     }
+
 
     // random floor lamp
     if (energyObj.id === "floor_lamp" && energyObj.isTurnedOn === true) {
@@ -268,7 +280,9 @@ function randomizeLivingroom() {
 
     // random fan
     if (energyObj.id === "fan" && energyObj.isTurnedOn === true) {
+      //document.querySelector("#fan_blades").classList.add("vibrate3");
       document.querySelector("#fan_blades").classList.add("spin");
+      document.querySelector("#fan_sfx").play();
     }
 
     // random left ceiling light
@@ -455,11 +469,14 @@ function playLivingRoom() {
 
       if (document.querySelector("#tv_static").classList.contains("hide")) {
         document.querySelector("#tv_static").classList.toggle("hide");
+        document.querySelector("#static_sfx").play();
+        document.querySelector("#static_sfx").volume = .05;
         console.log("snif tændte for tv'et");
 
         addPenalty();
       } else if (!document.querySelector("#tv_static").classList.contains("hide")) {
         document.querySelector("#tv_static").classList.toggle("hide");
+        document.querySelector("#static_sfx").pause();
         console.log("snif slukkede for tv'et");
 
         increaseScore();
@@ -491,10 +508,15 @@ function playLivingRoom() {
       if (document.querySelector("#radiator_x5F_hot").classList.contains("hide")) {
         document.querySelector(`#radiator_2_`).classList.toggle("hide");
         console.log(`snif skruede ned for radiatoren`);
+        document.querySelector(`#radiator_sfx`).pause();
+
         increaseScore();
       } else {
         document.querySelector(`#radiator_2_`).classList.toggle("hide");
         console.log(`snif tændte for radiatoren`);
+        document.querySelector(`#radiator_sfx`).play();
+        document.querySelector(`#radiator_sfx`).volume = .02;
+
         addPenalty();
       }
 
@@ -593,12 +615,15 @@ function playLivingRoom() {
 
       if (document.querySelector("#floor_lamp #light_1_").classList.contains("hide")) {
         document.querySelector("#floor_lamp #light_1_").classList.toggle("hide");
+        document.querySelector("#lightswitch2_sfx").play();
         console.log(`snif tændte for gulvlampen`);
 
         addPenalty();
       } else if (!document.querySelector("#floor_lamp #light_1_").classList.contains("hide")) {
         document.querySelector("#floor_lamp #light_1_").classList.toggle("hide");
         console.log(`snif slukkede for gulvlampen`);
+        document.querySelector("#lightswitch2_sfx").play();
+
 
         increaseScore();
       }
@@ -660,11 +685,14 @@ function playLivingRoom() {
       if (document.querySelector("#fan_blades").classList.contains("spin")) {
         document.querySelector("#fan_blades").classList.remove("spin");
         console.log(`snif slukkede for blæseren`);
+        document.querySelector("#fan_sfx").pause();
 
         increaseScore();
       } else if (!document.querySelector("#fan_blades").classList.contains("hide")) {
         document.querySelector("#fan_blades").classList.add("spin");
         console.log(`snif tændte for blæseren`);
+        document.querySelector("#fan_sfx").play();
+
 
         addPenalty();
       }
