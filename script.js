@@ -1039,6 +1039,7 @@ function playBathRoom() {
   // idk
   // idk
   // idk
+  addAnimationBathroom();
   function addAnimationBathroom() {
     document.querySelectorAll("audio").forEach((audio) => (audio.volume = 0.2));
 
