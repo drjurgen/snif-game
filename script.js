@@ -73,7 +73,7 @@ const LivingRoomEnergySource = {
 const allLivingRoomSources = [];
 
 // CURRENT PLAYING LEVEL
-let currentLevel = "livingroom";
+let currentLevel = "bathroom";
 
 // SETUP GAME
 function setupGame() {
