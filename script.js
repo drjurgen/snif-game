@@ -242,8 +242,11 @@ function randomizeLivingroom() {
     // random tv
     if (energyObj.id === "tv" && energyObj.isTurnedOn === true) {
       document.querySelector("#tv_static").classList.remove("hide");
+      document.querySelector("#static_sfx").play();
+      document.querySelector("#static_sfx").volume = 0.05;
     } else if (energyObj.id === "tv" && energyObj.isTurnedOn === false) {
       document.querySelector("#tv_static").classList.add("hide");
+      document.querySelector("#static_sfx").pause();
     }
 
     // random speakers
@@ -265,9 +268,12 @@ function randomizeLivingroom() {
     if (energyObj.id === "radiator_x5F_hot" && energyObj.isTurnedOn === true) {
       document.querySelector(`#${energyObj.id}`).classList.remove("hide");
       document.querySelector(`#radiator_2_`).classList.add("hide");
+      document.querySelector(`#radiator_sfx`).play();
+      document.querySelector(`#radiator_sfx`).volume = 0.02;
     } else if (energyObj.id === "radiator_x5F_hot" && energyObj.isTurnedOn === false) {
       document.querySelector(`#${energyObj.id}`).classList.add("hide");
       document.querySelector(`#radiator_2_`).classList.remove("hide");
+      document.querySelector(`#radiator_sfx`).pause();
     }
 
     // random floor lamp
@@ -286,7 +292,9 @@ function randomizeLivingroom() {
 
     // random fan
     if (energyObj.id === "fan" && energyObj.isTurnedOn === true) {
+      //document.querySelector("#fan_blades").classList.add("vibrate3");
       document.querySelector("#fan_blades").classList.add("spin");
+      document.querySelector("#fan_sfx").play();
     }
 
     // random left ceiling light
