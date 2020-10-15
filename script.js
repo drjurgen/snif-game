@@ -73,7 +73,7 @@ const LivingRoomEnergySource = {
 const allLivingRoomSources = [];
 
 // CURRENT PLAYING LEVEL
-let currentLevel = "livingroom";
+let currentLevel = "bathroom";
 
 // SETUP GAME
 function setupGame() {
@@ -1117,6 +1117,8 @@ function resetGame() {
   walkingToWashing = false;
   walkingToShower = false;
   walkingToSink = false;
+
+  document.querySelector(".time").textContent = `time left: 60`;
 
   startGame();
 }
