@@ -73,7 +73,7 @@ const LivingRoomEnergySource = {
 const allLivingRoomSources = [];
 
 // CURRENT PLAYING LEVEL
-let currentLevel = "livingroom";
+let currentLevel = "bathroom";
 
 // SETUP GAME
 function setupGame() {
@@ -1031,6 +1031,195 @@ function playBathRoom() {
 
       // show correct direction
       document.querySelector("#snif_front_left").style.display = "inline";
+    }
+  }
+
+  // idk
+  // idk
+  // idk
+  // idk
+  // idk
+  function addAnimationBathroom() {
+    document.querySelectorAll("audio").forEach((audio) => (audio.volume = 0.2));
+
+    document.querySelector("#hairdryer").classList.toggle("vibrate");
+    document.querySelector("#hairdryer_sfx").play();
+    document.querySelector("#hairdryer_sfx").currentTime = 10;
+    document.querySelector("#hairdryer_cord").classList.toggle("vibrate_cord");
+
+    document.querySelector("#washer_2_").classList.toggle("vibrate2");
+    document.querySelector("#washing_machine_sfx").play();
+
+    document.querySelector("#dryer_2_").classList.toggle("vibrate2");
+    document.querySelector("#dryer_sfx").play();
+
+    document.querySelector("#washer_2_ #inner_washer").classList.toggle("spin");
+
+    sinkRunning = true;
+
+    startSink();
+
+    document.querySelector("#sink_water").classList.toggle("sink_water");
+
+    showerRunning = true;
+    document.querySelector("#shower_puddle #puddle_c").classList.toggle("puddle_scale_center");
+    document.querySelector(`#puddle_ring1`).classList.add("hide");
+    document.querySelector(`#puddle_ring2`).classList.add("hide");
+    document.querySelector(`#puddle_ring3`).classList.add("hide");
+    document.querySelector(`#puddle_ring4`).classList.add("hide");
+
+    showerDrop();
+    document.querySelector("#wind_sfx").play();
+
+    addEventsBathroom();
+  }
+
+  function startSink() {
+    console.log("start");
+
+    document.querySelector("#sink_drops_2_ #drop1_2_").classList.add("drop");
+    document.querySelector("#sink_drops_2_ #drop1_2_").addEventListener("animationend", playSink);
+
+    function playSink() {
+      document.querySelector("#sink_drops_2_ #drop1_2_").removeEventListener("animationend", playSink);
+      console.log("play");
+      document.querySelector("#sink_drip_sfx").play();
+      document.querySelector("#sink_drops_2_ #drop1_2_").classList.remove("drop");
+      if (sinkRunning === true) {
+        setTimeout(startSink, 2000);
+      }
+    }
+  }
+
+  function addEventsBathroom() {
+    document.querySelector("#hairdryer").addEventListener("click", stopHairdryer);
+
+    function stopHairdryer() {
+      document.querySelector("#hairdryer_sfx").pause();
+      document.querySelector("#hairdryer_sfx").currentTime = 10;
+      document.querySelector("#hairdryer").classList.toggle("vibrate");
+      document.querySelector("#hairdryer_cord").classList.toggle("vibrate_cord");
+
+      document.querySelector("#hot_circle").classList.toggle("hide");
+    }
+    document.querySelector("#washer_2_").addEventListener("click", stopWasher);
+
+    function stopWasher() {
+      document.querySelector("#washer_2_").classList.toggle("vibrate2");
+      document.querySelector("#washer_2_ #inner_washer").classList.toggle("spin");
+      document.querySelector("#washing_machine_sfx").pause();
+    }
+    document.querySelector("#dryer_2_").addEventListener("click", stopDryer);
+
+    function stopDryer() {
+      document.querySelector("#dryer_2_").classList.toggle("vibrate2");
+      document.querySelector("#dryer_sfx").pause();
+    }
+
+    document.querySelector("#window_1_").addEventListener("click", closeWindow);
+    document.querySelector("#window_back").addEventListener("click", openWindow);
+
+    function closeWindow() {
+      document.querySelector("#window_close_sfx").play();
+      document.querySelector("#window_close_sfx").currentTime = 1.5;
+
+      setTimeout(function () {
+        document.querySelector("#window_1_").classList.toggle("hide");
+        document.querySelector("#wind_sfx").pause();
+      }, 200);
+    }
+
+    function openWindow() {
+      document.querySelector("#window_open_sfx").play();
+
+      setTimeout(function () {
+        document.querySelector("#window_1_").classList.toggle("hide");
+        document.querySelector("#wind_sfx").play();
+      }, 1000);
+    }
+
+    document.querySelector("#sink_2_").addEventListener("click", offSink);
+
+    function offSink() {
+      console.log("ofssifnsi");
+      sinkRunning = false;
+      document.querySelector("#sink_2_").removeEventListener("click", offSink);
+
+      document.querySelector("#sink_drops_2_ #drop1_2_").classList.remove("drop");
+      document.querySelector("#sink_water").style.animationPlayState = "paused";
+      document.querySelector("#sink_2_").addEventListener("click", sinkWater);
+
+      function sinkWater() {
+        console.log("sinkwater");
+        startSink();
+        document.querySelector("#sink_2_").removeEventListener("click", sinkWater);
+
+        document.querySelector("#sink_water").style.animationPlayState = "running";
+        document.querySelector("#sink_2_").addEventListener("click", offSink);
+      }
+    }
+
+    document.querySelector("#lightswitch").addEventListener("click", offLight);
+    document.querySelector("#lightswitch_back").addEventListener("click", onLight);
+
+    function offLight() {
+      document.querySelector("#light").classList.toggle("hide");
+      document.querySelector("#lightswitch_off_sfx").play();
+      document.querySelector("#lightswitch").classList.toggle("hide");
+    }
+
+    function onLight() {
+      document.querySelector("#lightswitch").classList.toggle("hide");
+      document.querySelector("#light").classList.toggle("hide");
+      document.querySelector("#lightswitch_off_sfx").play();
+    }
+    document.querySelector("#shower_head").addEventListener("click", offShower);
+
+    function offShower() {
+      if (showerRunning === false) {
+        showerRunning = true;
+        showerDrop();
+      } else {
+        showerRunning = false;
+      }
+    }
+  }
+
+  function showerDrop() {
+    let ranDrop = Math.floor(Math.random() * 4) + 1;
+
+    console.log(`#shower_drops_2_ #shower_drop${ranDrop}`);
+    document.querySelector(`#shower_drops_2_ #showerdrop${ranDrop}`).classList.toggle("drop_shower");
+    document.querySelector(`#shower_drops_2_ #showerdrop${ranDrop}`).addEventListener("animationend", rippleEffect);
+
+    function rippleEffect() {
+      console.log("ripple");
+      document.querySelector(`#shower_drop_sfx`).play();
+
+      document.querySelector(`#shower_drops_2_ #showerdrop${ranDrop}`).removeEventListener("animationend", rippleEffect);
+
+      document.querySelector(`#puddle_ring${ranDrop}`).classList.remove("hide");
+
+      document.querySelector(`#puddle_ring${ranDrop} #ripple_outer`).classList.add("ripple");
+      document.querySelector(`#puddle_ring${ranDrop} #ripple_inner`).classList.add("ripple2");
+
+      document.querySelector(`#puddle_ring${ranDrop} #ripple_outer`).addEventListener("animationend", anotherDrop);
+
+      function anotherDrop() {
+        console.log("another");
+        document.querySelector(`#puddle_ring${ranDrop} #ripple_outer`).removeEventListener("animationend", anotherDrop);
+
+        document.querySelector(`#shower_drops_2_ #showerdrop${ranDrop}`).classList.toggle("drop_shower");
+
+        document.querySelector(`#puddle_ring${ranDrop}`).classList.add("hide");
+
+        document.querySelector(`#puddle_ring${ranDrop} #ripple_outer`).classList.remove("ripple");
+        document.querySelector(`#puddle_ring${ranDrop} #ripple_inner`).classList.remove("ripple2");
+
+        if (showerRunning === true) {
+          setTimeout(showerDrop, 50);
+        }
+      }
     }
   }
 }
