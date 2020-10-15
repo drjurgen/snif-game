@@ -84,7 +84,7 @@ const allLivingRoomSources = [];
 const allBathroomSources = [];
 
 // CURRENT PLAYING LEVEL
-let currentLevel = "bathroom";
+let currentLevel = "livingroom";
 
 // SETUP GAME
 function setupGame() {
@@ -344,11 +344,9 @@ function animateSpeaker(energyObj) {
 
 function playLivingRoom() {
   if (livingroomListeners === false) {
-    document.querySelector("#living-room").classList.remove("hide");
-
     livingroomListeners = true;
-
     addGuiEvents();
+
     function addGuiEvents() {
       // add eventlisteners
       document.querySelector("#tv").addEventListener("click", goToTv); // add tv eventlistener
@@ -411,6 +409,7 @@ function playLivingRoom() {
     svg = document.querySelector("svg");
 
     calcSnifCoordinates();
+
     function calcSnifCoordinates() {
       //snif vector coordinates
       snif = document.querySelector("#snif");
@@ -455,11 +454,14 @@ function playLivingRoom() {
 
       if (document.querySelector("#tv_static").classList.contains("hide")) {
         document.querySelector("#tv_static").classList.toggle("hide");
+        document.querySelector("#static_sfx").play();
+        document.querySelector("#static_sfx").volume = 0.05;
         console.log("snif tændte for tv'et");
 
         addPenalty();
       } else if (!document.querySelector("#tv_static").classList.contains("hide")) {
         document.querySelector("#tv_static").classList.toggle("hide");
+        document.querySelector("#static_sfx").pause();
         console.log("snif slukkede for tv'et");
 
         increaseScore();
@@ -491,10 +493,15 @@ function playLivingRoom() {
       if (document.querySelector("#radiator_x5F_hot").classList.contains("hide")) {
         document.querySelector(`#radiator_2_`).classList.toggle("hide");
         console.log(`snif skruede ned for radiatoren`);
+        document.querySelector(`#radiator_sfx`).pause();
+
         increaseScore();
       } else {
         document.querySelector(`#radiator_2_`).classList.toggle("hide");
         console.log(`snif tændte for radiatoren`);
+        document.querySelector(`#radiator_sfx`).play();
+        document.querySelector(`#radiator_sfx`).volume = 0.02;
+
         addPenalty();
       }
 
@@ -543,6 +550,7 @@ function playLivingRoom() {
         //pause all walk animations on all snif-sprites
         document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
           sprite.addEventListener("animationiteration", toggleWalk);
+
           function toggleWalk() {
             sprite.classList.remove("walk");
             sprite.classList.add("walk");
@@ -560,9 +568,15 @@ function playLivingRoom() {
 
   function toggleSpeaker() {
     if (clickedSpeaker.isTurnedOn === true) {
+      console.log("speaker on");
+
       increaseScore();
       console.log(`snif slukkede for ${clickedSpeaker.id}`);
     } else {
+      console.log("speaker off");
+
+      //document.querySelector("#background_music").play();
+
       console.log(`snif tændte for ${clickedSpeaker.id}`);
       addPenalty();
     }
@@ -586,12 +600,14 @@ function playLivingRoom() {
 
       if (document.querySelector("#floor_lamp #light_1_").classList.contains("hide")) {
         document.querySelector("#floor_lamp #light_1_").classList.toggle("hide");
+        document.querySelector("#lightswitch2_sfx").play();
         console.log(`snif tændte for gulvlampen`);
 
         addPenalty();
       } else if (!document.querySelector("#floor_lamp #light_1_").classList.contains("hide")) {
         document.querySelector("#floor_lamp #light_1_").classList.toggle("hide");
         console.log(`snif slukkede for gulvlampen`);
+        document.querySelector("#lightswitch2_sfx").play();
 
         increaseScore();
       }
@@ -653,11 +669,13 @@ function playLivingRoom() {
       if (document.querySelector("#fan_blades").classList.contains("spin")) {
         document.querySelector("#fan_blades").classList.remove("spin");
         console.log(`snif slukkede for blæseren`);
+        document.querySelector("#fan_sfx").pause();
 
         increaseScore();
       } else if (!document.querySelector("#fan_blades").classList.contains("hide")) {
         document.querySelector("#fan_blades").classList.add("spin");
         console.log(`snif tændte for blæseren`);
+        document.querySelector("#fan_sfx").play();
 
         addPenalty();
       }
@@ -685,12 +703,16 @@ function playLivingRoom() {
       if (document.querySelector("#lightswitch_left_2_").classList.contains("hide")) {
         document.querySelector("#left_ceiling_lamp_1_ #light_4_").classList.toggle("hide");
         document.querySelector("#lightswitch_left_2_").classList.toggle("hide");
+        document.querySelector("#lightswitch_on_sfx").play();
+
         console.log(`snif tændte for venstre loftslampe`);
 
         addPenalty();
       } else if (!document.querySelector("#lightswitch_left_2_").classList.contains("hide")) {
         document.querySelector("#left_ceiling_lamp_1_ #light_4_").classList.toggle("hide");
         document.querySelector("#lightswitch_left_2_").classList.toggle("hide");
+        document.querySelector("#lightswitch_off_sfx").play();
+
         console.log(`snif slukkede for venstre loftslampe`);
 
         increaseScore();
@@ -712,6 +734,7 @@ function playLivingRoom() {
   }
 
   function inFrontRightLight() {
+    console.log("yo");
     if (snifX > 210 && snifX < 235 && snifY > 240 && snifY < 260) {
       document.querySelector("#snif").style.animationPlayState = "paused"; //pause path animation
       stopWalkAnimation();
@@ -719,12 +742,16 @@ function playLivingRoom() {
       if (document.querySelector("#lightswitch_right_1_").classList.contains("hide")) {
         document.querySelector("#right_ceiling_lamp_1_ #light_5_").classList.toggle("hide");
         document.querySelector("#lightswitch_right_1_").classList.toggle("hide");
+        document.querySelector("#lightswitch_on_sfx").play();
+
         console.log(`snif tændte for højre loftslampe`);
 
         addPenalty();
       } else if (!document.querySelector("#lightswitch_right_1_").classList.contains("hide")) {
         document.querySelector("#right_ceiling_lamp_1_ #light_5_").classList.toggle("hide");
         document.querySelector("#lightswitch_right_1_").classList.toggle("hide");
+        document.querySelector("#lightswitch_off_sfx").play();
+
         console.log(`snif slukkede for højre loftslampe`);
 
         increaseScore();
@@ -743,6 +770,7 @@ function playLivingRoom() {
     //pause all walk animations on all snif-sprites
     document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
       sprite.addEventListener("animationiteration", toggleWalk);
+
       function toggleWalk() {
         sprite.classList.remove("walk");
         sprite.classList.add("walk");
@@ -756,16 +784,16 @@ function playLivingRoom() {
 
   // CHOOSE CORRECT SNIF SPRITE FOR WALKING DIRECTION
   function chooseSnifDirection(positionOnPath) {
-    // console.log(positionOnPath);
+    //console.log(positionOnPath);
     let snifDirection;
 
     if (positionOnPath < 310 && positionOnPath > 200) {
       snifDirection = "back right";
       showSnifDirection(snifDirection);
-    } else if ((positionOnPath < 210 && positionOnPath > 110) || positionOnPath > 650) {
+    } else if (positionOnPath < 210 && positionOnPath > 110) {
       snifDirection = "front right";
       showSnifDirection(snifDirection);
-    } else if (positionOnPath < 100 || positionOnPath > 482) {
+    } else if (positionOnPath < 100) {
       snifDirection = "front left";
       showSnifDirection(snifDirection);
     } else if (positionOnPath < 50) {
@@ -811,6 +839,11 @@ function playLivingRoom() {
     }
   }
 
+  // ADD TIME PENALTY FOR WRONGLY CLICKED OBJECT
+  function addPenalty() {
+    timer.timeLeft = timer.timeLeft + 5; // add penalty score
+  }
+
   // CHECK IF ALL ENERGY SOURCES ARE TURNED OFF
   function checkLivingroomState() {
     if (allLivingRoomSources.every((obj) => obj.isTurnedOn === false)) {
@@ -825,12 +858,9 @@ function playLivingRoom() {
       document.querySelector("#living-room").classList.remove("fade-in");
       void document.querySelector("#living-room").offsetHeight;
       document.querySelector("#living-room").classList.add("fade-in");
-      document.querySelector("#living-room").addEventListener("animationend", hideRoom);
-
-      function hideRoom() {
+      document.querySelector("#living-room").addEventListener("animationend", () => {
         document.querySelector("#living-room").classList.add("hide");
-        document.querySelector("#living-room").removeEventListener("animationend", hideRoom);
-      }
+      });
 
       setTimeout(showBathroom, 1500);
     }, 1000);
