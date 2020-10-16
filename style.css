@@ -27,7 +27,7 @@ button {
   overflow: hidden;
 }
 
-#start-button,
+#start-button, 
 #play-again {
   position: absolute;
   right: 30vw;
@@ -47,6 +47,51 @@ button {
   padding-top: 20px;
   padding-left: 25px;
 }
+#start-button2{
+ 
+  height: 15vw;
+  width: 15vw;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 6vw;
+  cursor: pointer;
+  background-color: #f47c4a;
+  color: #fff;
+  text-align: center;
+  padding-left: 1.8vw;
+  padding-top: 1vw;
+
+}
+
+#button_div{
+  position: relative;
+  left: 45vw;
+  top: 2vw;
+  width: 12vw;
+  height: 12vw;
+}
+
+#intro{
+  position: absolute;
+  top: 20vh;
+  left: 17.37vw;
+  width: 65.260vw;
+  height: 31vw;
+  background-image: url(snif_startscreen2.svg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+#intro_text {
+  width:44vw;
+  font-size: 3vw;
+  margin-top: 10vh;
+  margin-left: 16vw;
+}
+
 
 #play-again {
   position: initial;
@@ -559,4 +604,26 @@ button {
 
     transform: scale(4);
   }
+}
+.vibrate3 {
+  animation: vibrate3_kf .5s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes vibrate3_kf {
+33%{
+    transform: translate3d(-1px, -1px, 0);
+  }
+66%{
+    transform: translate3d(1px, 1px, 0);
+  }
+  
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+
+#window_back,#lightswitch_back{
+  cursor: pointer;
 }

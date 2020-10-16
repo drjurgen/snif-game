@@ -1,6 +1,6 @@
 "use strict";
 
-window.addEventListener("DOMContentLoaded", setupGame);
+window.addEventListener("DOMContentLoaded", setupIntro);
 
 let isPlaying = false;
 
@@ -58,11 +58,18 @@ let showerRunning = false;
 let walkingToSink = false;
 let sinkRunning = false;
 
+// Window
+let walkingToWindow = false;
+
+// Bathroom window
+let walkingToLight = false;
+
+
 // GAME MECHANICS
 let score = 0;
 const timer = {
   timeCounter: 60,
-  timeLeft: 5,
+  timeLeft: 60,
   totalTimeScore: "",
 };
 
@@ -88,8 +95,23 @@ const allBathroomSources = [];
 let currentLevel = "livingroom";
 
 // SETUP GAME
+function setupIntro() {
+  document.querySelector("#start-button").addEventListener("click", setupGame);
+  document.querySelector("#intro").style.display = "none";
+  document.querySelector("#game").style.display = "none";
+
+
+}
+
+// SETUP GAME
 function setupGame() {
-  document.querySelector("#start-button").addEventListener("click", startGame);
+  console.log("yo")
+  document.querySelector("#start-button").style.display = "none";
+  document.querySelector("#intro").style.display = "block";
+
+
+  document.querySelector("#start-button2").addEventListener("click", startGame);
+
   document.querySelector("#game").style.display = "none";
 }
 
@@ -97,8 +119,10 @@ function setupGame() {
 function startGame() {
   isPlaying = true;
 
+  document.querySelector("#intro").style.display = "none";
   document.querySelector("#start-screen").style.display = "none";
   document.querySelector("#game").style.display = "flex";
+
   if (currentLevel === "livingroom") {
     loadLivingRoom();
   } else if (currentLevel === "bathroom") {
@@ -161,10 +185,12 @@ function loadSnif() {
           prepareBathroom();
           randomizeBathroom(); // randomize states of energy sources
         }, 500);
-        if (livingroomListeners === true) {
-        } else if (livingroomListeners === false) {
-          runLoop(); // run the game loop
-        }
+        setTimeout(function () {
+          if (livingroomListeners === true) {} else if (livingroomListeners === false) {
+            runLoop(); // run the game loop
+          }
+
+        }, 2000);
 
         playBathRoom();
       }
@@ -174,15 +200,16 @@ function loadSnif() {
 function runLoop() {
   if (isPlaying === true) {
     if (currentLevel === "livingroom") {
-      if (document.querySelector("#living-room #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {
-      } else {
+      if (document.querySelector("#living-room #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {} else {
         playLivingRoom();
       }
     } else if (currentLevel === "bathroom") {
-      if (document.querySelector("#bathroom #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {
-      } else {
-        playBathRoom();
+      if (document.querySelector("#bathroom #snif") !== null) {
+        if (document.querySelector("#bathroom #snif").style.animationPlayState === "paused" || timer.timeLeft === 0) {} else {
+          playBathRoom();
+        }
       }
+
     }
 
     // check time left
@@ -295,8 +322,8 @@ function randomizeLivingroom() {
 
     // random fan
     if (energyObj.id === "fan" && energyObj.isTurnedOn === true) {
-      //document.querySelector("#fan_blades").classList.add("vibrate3");
-      document.querySelector("#fan_blades").classList.add("spin");
+      document.querySelector("#fan").classList.add("vibrate3");
+      //document.querySelector("#fan_blades").classList.add("spin");
       document.querySelector("#fan_sfx").play();
     }
 
@@ -693,14 +720,14 @@ function playLivingRoom() {
 
       stopWalkAnimation();
 
-      if (document.querySelector("#fan_blades").classList.contains("spin")) {
-        document.querySelector("#fan_blades").classList.remove("spin");
+      if (document.querySelector("#fan").classList.contains("vibrate3")) {
+        document.querySelector("#fan").classList.remove("vibrate3");
         console.log(`snif slukkede for blæseren`);
         document.querySelector("#fan_sfx").pause();
 
         increaseScore();
-      } else if (!document.querySelector("#fan_blades").classList.contains("hide")) {
-        document.querySelector("#fan_blades").classList.add("spin");
+      } else if (!document.querySelector("#fan").classList.contains("hide")) {
+        document.querySelector("#fan").classList.add("vibrate3");
         console.log(`snif tændte for blæseren`);
         document.querySelector("#fan_sfx").play();
 
@@ -888,6 +915,7 @@ function playLivingRoom() {
       document.querySelector("#living-room").classList.add("fade-in");
 
       document.querySelector("#living-room").addEventListener("animationend", hideRoom);
+
       function hideRoom() {
         document.querySelector("#living-room").classList.add("hide");
         document.querySelector("#living-room").removeEventListener("animationend", hideRoom);
@@ -918,14 +946,14 @@ function prepareBathroom() {
   document.querySelector("#hidden-snif #snif_back_left").classList.add("walk");
 
   addAnimationBathroom();
+
   function addAnimationBathroom() {
-    document.querySelectorAll("audio").forEach((audio) => (audio.volume = 0.2));
 
     document.querySelector("#washer_2_").classList.toggle("vibrate2");
     document.querySelector("#washing_machine_sfx").play();
-    document.querySelector("#washing_machine_sfx").volume = 1;
+    document.querySelector("#washing_machine_sfx").volume = .1;
+    document.querySelector("#wind_sfx").play();
 
-    document.querySelector("#washer_2_ #inner_washer").classList.toggle("spin");
 
     sinkRunning = true;
 
@@ -947,7 +975,6 @@ function prepareBathroom() {
   function addEventsBathroom() {
     function stopWasher() {
       document.querySelector("#washer_2_").classList.toggle("vibrate2");
-      document.querySelector("#washer_2_ #inner_washer").classList.toggle("spin");
       document.querySelector("#washing_machine_sfx").pause();
     }
 
@@ -1043,6 +1070,8 @@ function randomizeBathroom() {
   document.querySelector("#washer_2_").classList.add("energy-source");
   document.querySelector("#shower").classList.add("energy-source");
   document.querySelector("#sink_2_").classList.add("energy-source");
+  document.querySelector("#window_1_").classList.add("energy-source");
+  document.querySelector("#lightswitch").classList.add("energy-source");
 
   const powerStates = [true, false];
   document.querySelectorAll("#bathroom .energy-source").forEach((svgObj) => {
@@ -1055,6 +1084,12 @@ function randomizeBathroom() {
     if (allBathroomSources.every((obj) => obj.isTurnedOn === false)) {
       console.log("all objects were false - chose a fallback");
       if (energyObj.id === "shower") {
+        energyObj.isTurnedOn = true;
+      }
+      if (energyObj.id === "window_1_") {
+        energyObj.isTurnedOn = true;
+      }
+      if (energyObj.id === "light_1_") {
         energyObj.isTurnedOn = true;
       }
     }
@@ -1084,6 +1119,20 @@ function randomizeBathroom() {
       document.querySelector("#sink_drip_sfx").pause();
       sinkRunning = false;
     }
+
+    //random window
+    if (energyObj.id === "window_1_" && energyObj.isTurnedOn === false) {
+      console.log("yo");
+      document.querySelector("#wind_sfx").pause();
+      document.querySelector("#window_1_").classList.toggle("hide");
+    }
+
+    //random light
+    if (energyObj.id === "lightswitch" && energyObj.isTurnedOn === false) {
+      console.log("yo");
+      document.querySelector("#light_1_").classList.toggle("hide");
+      document.querySelector("#lightswitch").classList.toggle("hide");
+    }
   });
   // idk fammmm
 
@@ -1099,11 +1148,17 @@ function playBathRoom() {
     bathroomListeners = true;
 
     addGuiEvents();
+
     function addGuiEvents() {
       // add eventlisteners
       document.querySelector("#washer_2_").addEventListener("click", goToWashing);
       document.querySelector("#shower").addEventListener("click", goToShower);
       document.querySelector("#sink_2_").addEventListener("click", goToSink);
+      document.querySelector("#window_1_").addEventListener("click", goToWindow);
+      document.querySelector("#window_back").addEventListener("click", goToWindow);
+      document.querySelector("#lightswitch").addEventListener("click", goToLight);
+      document.querySelector("#lightswitch_back").addEventListener("click", goToLight);
+
     }
   }
 
@@ -1124,6 +1179,12 @@ function playBathRoom() {
     if (walkingToShower === true) {
       inFrontShower();
     }
+    if (walkingToWindow === true) {
+      inFrontWindow();
+    }
+    if (walkingToLight === true) {
+      inFrontLight();
+    }
   }
 
   // FIND SNIF COORDINATES
@@ -1131,6 +1192,7 @@ function playBathRoom() {
     svg = document.querySelector("#bathroom svg");
 
     calcSnifCoordinates();
+
     function calcSnifCoordinates() {
       //snif vector coordinates
       snif = document.querySelector("#bathroom #snif");
@@ -1167,14 +1229,12 @@ function playBathRoom() {
       if (washingObj.isTurnedOn === true) {
         washingObj.isTurnedOn = !washingObj.isTurnedOn;
         document.querySelector("#washer_2_").classList.remove("vibrate2");
-        document.querySelector("#inner_washer").classList.remove("spin");
         document.querySelector("#washing_machine_sfx").pause();
 
         increaseScore();
       } else {
         washingObj.isTurnedOn = !washingObj.isTurnedOn;
         document.querySelector("#washer_2_").classList.add("vibrate2");
-        document.querySelector("#inner_washer").classList.add("spin");
         document.querySelector("#washing_machine_sfx").play();
 
         addPenalty();
@@ -1259,11 +1319,89 @@ function playBathRoom() {
     }
   }
 
+  function goToWindow() {
+    walkingToWindow = true;
+    document.querySelectorAll(".walk").forEach((sprite) => (sprite.style.animationPlayState = "running")); //start all walk animations on all snif-sprites
+    document.querySelector("#bathroom #snif").style.animationPlayState = "running"; //run path animation
+  }
+
+  function inFrontWindow() {
+    if (snifX > 310 && snifX < 315 && snifY > 275 && snifY < 285) {
+      document.querySelector("#bathroom #snif").style.animationPlayState = "paused"; //pause path animation
+      stopWalkAnimation();
+      walkingToWindow = false;
+      const windowObj = allBathroomSources.find((element) => element.id === "window_1_");
+      console.log(windowObj)
+      if (windowObj.isTurnedOn === true) {
+        console.log("yoyo")
+        document.querySelector(`#window_close_sfx`).play();
+        document.querySelector(`#window_close_sfx`).currentTime = 1.5;
+
+        document.querySelector(`#window_close_sfx`).volume = 1;
+        setTimeout(function () {
+          document.querySelector("#window_1_").classList.toggle("hide");
+
+          document.querySelector(`#wind_sfx`).pause()
+        }, 500);
+        windowObj.isTurnedOn = !windowObj.isTurnedOn;
+        increaseScore();
+      } else {
+        console.log("nono")
+
+        document.querySelector(`#window_open_sfx`).play();
+        document.querySelector(`#window_open_sfx`).volume = 1;
+        document.querySelector(`#wind_sfx`).play();
+
+        document.querySelector("#window_1_").classList.toggle("hide");
+
+        windowObj.isTurnedOn = !windowObj.isTurnedOn;
+        //showerRunning = true;
+        addPenalty();
+      }
+      console.log(windowObj);
+    }
+  }
+
+  function goToLight() {
+    walkingToLight = true;
+    document.querySelectorAll(".walk").forEach((sprite) => (sprite.style.animationPlayState = "running")); //start all walk animations on all snif-sprites
+    document.querySelector("#bathroom #snif").style.animationPlayState = "running"; //run path animation
+  }
+
+  function inFrontLight() {
+    if (snifX > 115 && snifX < 125 && snifY > 325 && snifY < 340) {
+      document.querySelector("#bathroom #snif").style.animationPlayState = "paused"; //pause path animation
+      stopWalkAnimation();
+      walkingToLight = false;
+
+      const lightObj = allBathroomSources.find((element) => element.id === "lightswitch");
+      if (lightObj.isTurnedOn === true) {
+        document.querySelector("#light_1_").classList.toggle("hide");
+        document.querySelector("#lightswitch").classList.toggle("hide");
+
+        document.querySelector("#lightswitch_off_sfx").play();
+
+        lightObj.isTurnedOn = !lightObj.isTurnedOn;
+        increaseScore();
+      } else {
+        document.querySelector("#light_1_").classList.toggle("hide");
+        document.querySelector("#lightswitch").classList.toggle("hide");
+
+        document.querySelector("#lightswitch_on_sfx").play();
+
+        lightObj.isTurnedOn = !lightObj.isTurnedOn;
+        addPenalty();
+      }
+    }
+  }
+
+
   // STOP SNIF WALK ANIMATION
   function stopWalkAnimation() {
     //pause all walk animations on all snif-sprites
     document.querySelectorAll("#hidden-snif .walk").forEach((sprite) => {
       sprite.addEventListener("animationiteration", toggleWalk);
+
       function toggleWalk() {
         sprite.classList.remove("walk");
         sprite.classList.add("walk");
@@ -1396,6 +1534,7 @@ function endGame() {
     if (timer.timeLeft > 0) {
       timeScore.textContent = `Godt Klaret! Du klarede det på ${timer.totalTimeScore} sekunder!`;
       const autograph = document.createElement("img");
+      autograph.id = `autograph`;
       autograph.src = `snif-autograf.png`;
       autograph.alt = "snif underskrift";
       document.querySelector("#autograf-container").appendChild(autograph);
@@ -1419,6 +1558,12 @@ function resetGame() {
   document.querySelector("#living-room").classList.remove("hide");
   document.querySelector("#bathroom").classList.remove("fade-in");
   document.querySelector("#bathroom").style.display = "none";
+  if (document.querySelector("#autograf-container").firstChild !== null) {
+    document.querySelector("#autograf-container").removeChild(document.querySelector("#autograph"));
+
+  }
+
+
 
   // RESET CORE MECHANICS
   isPlaying = true;
@@ -1441,13 +1586,26 @@ function resetGame() {
   livingroomListeners = false;
 
   allLivingRoomSources.splice(0, 9);
-  allBathroomSources.splice(0, 3);
+  allBathroomSources.splice(0, 5);
 
   // RESET BATHROOM
   bathroomListeners = false;
   walkingToWashing = false;
   walkingToShower = false;
   walkingToSink = false;
+  walkingToWindow = false;
+  walkingToLight = false;
+
+  //stop sounds
+  document.querySelector("#background_music").pause();
+  document.querySelector("#dryer_sfx").pause();
+  document.querySelector("#hairdryer_sfx").pause();
+  document.querySelector("#washing_machine_sfx").pause();
+  document.querySelector("#wind_sfx").pause();
+  document.querySelector("#fan_sfx").pause();
+  document.querySelector("#static_sfx").pause();
+  document.querySelector("#radiator_sfx").pause();
+
 
   document.querySelector(".time").textContent = `60 sekunder tilbage`;
   startGame();
