@@ -533,7 +533,7 @@ button {
   }
 
   100% {
-    transform: translateY(8vw);
+    transform: translateY(9.3vw);
   }
 }
 
@@ -626,4 +626,8 @@ button {
 
 #window_back,#lightswitch_back{
   cursor: pointer;
+}
+
+#path {
+  display:none;
 }

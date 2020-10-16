@@ -209,7 +209,6 @@ function runLoop() {
           playBathRoom();
         }
       }
-
     }
 
     // check time left
